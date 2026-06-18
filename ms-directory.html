@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Madhwa Samaj | Community Directory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --madhwa-primary: #e67e22;
+            --madhwa-light: #f39c12;
+            --madhwa-dark: #d35400;
+            --google-blue: #4285f4;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc04;
+            --google-green: #34a853;
+            --bg-warm: #fefaf5;
+            --surface-white: #ffffff;
+            --text-primary: #2c2418;
+            --text-secondary: #7a5a3a;
+            --border-soft: #f0e2d4;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 14px rgba(230,126,34,0.06);
+            --shadow-lg: 0 8px 28px rgba(0,0,0,0.08);
+            --radius: 16px;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-warm);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .page-content {
+            flex: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px 24px 48px;
+            width: 100%;
+        }
+        .directory-hero {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #fff8e1 100%);
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            margin-bottom: 32px;
+            text-align: center;
+            border: 1px solid rgba(230,126,34,0.12);
+        }
+        .directory-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .directory-hero h1 span { color: var(--madhwa-primary); }
+        .directory-hero p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 8px auto 0;
+        }
+        .stats-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 32px;
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            padding: 16px 24px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-sm);
+            justify-content: center;
+        }
+        .stats-bar .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .stats-bar .stat-item .num {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 18px;
+        }
+        .search-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .search-bar {
+            flex: 2;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 40px;
+            padding: 0 18px;
+            box-shadow: var(--shadow-sm);
+        }
+        .search-bar:focus-within {
+            border-color: var(--madhwa-primary);
+            box-shadow: 0 0 0 3px rgba(230,126,34,0.08);
+        }
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 12px 10px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+        }
+        .search-bar .search-icon { font-size: 18px; color: var(--text-secondary); }
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .chip {
+            padding: 6px 18px;
+            border-radius: 40px;
+            background: white;
+            border: 1px solid var(--border-soft);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .chip:hover { background: #fff3e0; border-color: var(--madhwa-light); }
+        .chip.active { background: var(--madhwa-primary); color: white; border-color: var(--madhwa-primary); }
+        .directory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .member-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-soft);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .member-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .member-card .member-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+        .member-card .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .member-card .avatar .role-badge {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+        .member-card .avatar .role-badge.seller { background: var(--google-blue); color: white; }
+        .member-card .avatar .role-badge.purohit { background: var(--google-green); color: white; }
+        .member-card .avatar .role-badge.admin { background: var(--google-red); color: white; }
+        .member-card .member-info { flex: 1; }
+        .member-card .member-name { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+        .member-card .member-role { font-size: 13px; color: var(--text-secondary); }
+        .member-card .member-location { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+        .member-card .member-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .member-card .member-badges .badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 12px;
+            background: #fff3e0;
+            color: var(--madhwa-primary);
+        }
+        .member-card .member-badges .badge.seller { background: #e3f2fd; color: #0d47a1; }
+        .member-card .member-badges .badge.purohit { background: #e8f5e9; color: #1b5e20; }
+        .member-card .member-badges .badge.admin { background: #ffebee; color: #c62828; }
+        .member-card .member-actions { margin-top: 14px; }
+        .member-card .member-actions button {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background: var(--madhwa-primary);
+            color: white;
+        }
+        .member-card .member-actions button:hover { transform: scale(1.02); }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: var(--radius);
+            max-width: 420px;
+            width: 92%;
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        .modal-box .modal-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin: 0 auto 12px;
+        }
+        .modal-box .modal-name { font-size: 22px; font-weight: 700; }
+        .modal-box .modal-role { font-size: 15px; color: var(--text-secondary); }
+        .modal-box .modal-location { font-size: 14px; color: var(--text-secondary); margin: 6px 0 12px; }
+        .modal-box .modal-bio {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 12px 0;
+            border-top: 1px solid var(--border-soft);
+            border-bottom: 1px solid var(--border-soft);
+            margin-bottom: 16px;
+        }
+        .modal-box .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .modal-box .modal-actions button {
+            padding: 8px 24px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--madhwa-primary);
+            color: white;
+        }
+        .modal-box .modal-actions .btn-close {
+            background: none;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-soft);
+        }
+        .modal-box .modal-actions .btn-close:hover { background: #f5f0eb; }
+
+        @media (max-width: 768px) {
+            .page-content { padding: 20px 16px 40px; }
+            .directory-hero { padding: 24px 20px; }
+            .directory-hero h1 { font-size: 26px; }
+            .directory-grid { grid-template-columns: 1fr; gap: 16px; }
+            .search-section { flex-direction: column; }
+            .search-bar { width: 100%; }
+            .filter-chips { gap: 6px; }
+            .chip { font-size: 11px; padding: 4px 14px; }
+            .stats-bar { padding: 12px 16px; gap: 12px 20px; }
+            .stats-bar .stat-item { font-size: 12px; }
+            .stats-bar .stat-item .num { font-size: 16px; }
+        }
+        @media (max-width: 480px) {
+            .member-card .member-header { flex-wrap: wrap; }
+            .member-card .avatar { width: 44px; height: 44px; font-size: 15px; }
+            .member-card .member-name { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="headerPlaceholder"></div>
+
+    <main class="page-content">
+
+        <div class="stats-bar">
+            <div class="stat-item">👥 Total Members: <span class="num" id="totalMembers">0</span></div>
+            <div class="stat-item">🙏 Purohits: <span class="num" id="totalPurohits">0</span></div>
+            <div class="stat-item">🛍️ Sellers: <span class="num" id="totalSellers">0</span></div>
+            <div class="stat-item">🟢 Online Now: <span class="num" id="onlineNow">0</span></div>
+        </div>
+
+        <div class="search-section">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search by name, location, or role..." oninput="filterMembers()">
+            </div>
+        </div>
+
+        <div class="filter-chips">
+            <span class="chip active" data-filter="all" onclick="filterByChip('all', this)">✨ All</span>
+            <span class="chip" data-filter="purohit" onclick="filterByChip('purohit', this)">🙏 Purohits</span>
+            <span class="chip" data-filter="seller" onclick="filterByChip('seller', this)">🛍️ Sellers</span>
+            <span class="chip" data-filter="admin" onclick="filterByChip('admin', this)">⭐ Admins</span>
+            <span class="chip" data-filter="user" onclick="filterByChip('user', this)">👤 Users</span>
+        </div>
+
+        <div class="directory-grid" id="directoryGrid"></div>
+    </main>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-box">
+            <div class="modal-avatar" id="modalAvatar">RJ</div>
+            <div class="modal-name" id="modalName">Ram Jio</div>
+            <div class="modal-role" id="modalRole">Seller</div>
+            <div class="modal-location" id="modalLocation">📍 Bengaluru, Karnataka</div>
+            <div class="modal-bio" id="modalBio">Passionate about serving the community through authentic spiritual products.</div>
+            <div class="modal-actions">
+                <button onclick="showToast('📩 Connection request sent!')">🤝 Connect</button>
+                <button class="btn-close" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-mantra">🙏 Hari Sarvottama, Vayu Jeevottama 🙏</div>
+        <div class="footer-copy">© 2026 Madhwa Samaj — Preserving the Dvaita Tradition</div>
+    </footer>
+
+    <div class="toast" id="toast">👤 Member profile loaded!</div>
+
+    <script>
+        const members = [
+            { id: 1, name: "Ram Jio", role: "seller", location: "Bengaluru, Karnataka", avatar: "RJ", bio: "Passionate about serving the community through authentic spiritual products." },
+            { id: 2, name: "Rama Krishna", role: "purohit", location: "Udupi, Karnataka", avatar: "RK", bio: "Vedic priest with 10+ years of experience in Satyanarayana Puja and homams." },
+            { id: 3, name: "Sita Devi", role: "user", location: "Mumbai, Maharashtra", avatar: "SD", bio: "Devotee and active community member." },
+            { id: 4, name: "Krishna Bhatta", role: "purohit", location: "Mysuru, Karnataka", avatar: "KB", bio: "Specializes in Vishnu Sahasranama and Rudra Abhishekam." },
+            { id: 5, name: "Priya Sharma", role: "user", location: "Chennai, Tamil Nadu", avatar: "PS", bio: "Passionate about preserving Madhwa traditions." },
+            { id: 6, name: "Anand Tirtha", role: "seller", location: "Mangaluru, Karnataka", avatar: "AT", bio: "Selling authentic puja items and books." },
+            { id: 7, name: "Vishnu Murthy", role: "admin", location: "Bengaluru, Karnataka", avatar: "VM", bio: "Community administrator and tech lead." },
+            { id: 8, name: "Lakshmi Narayan", role: "purohit", location: "Delhi", avatar: "LN", bio: "Expert in Vedic chanting and temple rituals." },
+            { id: 9, name: "Ganesh Rao", role: "seller", location: "Pune, Maharashtra", avatar: "GR", bio: "Offering handcrafted idols and prasad." },
+            { id: 10, name: "Saraswati Iyer", role: "user", location: "Tirupati, Andhra Pradesh", avatar: "SI", bio: "Devotee of Lord Venkateswara." },
+            { id: 11, name: "Madhava Sastry", role: "purohit", location: "Mantralayam, Andhra Pradesh", avatar: "MS", bio: "Performs rituals at Raghavendra Swamy temple." },
+            { id: 12, name: "Narayana Acharya", role: "admin", location: "Udupi, Karnataka", avatar: "NA", bio: "Oversees community engagement and events." },
+            { id: 13, name: "Radha Krishnan", role: "seller", location: "Mumbai, Maharashtra", avatar: "RK", bio: "Selling traditional wear and spiritual items." },
+            { id: 14, name: "Meera Bhat", role: "user", location: "Bengaluru, Karnataka", avatar: "MB", bio: "Active volunteer in community events." },
+            { id: 15, name: "Surya Narayan", role: "purohit", location: "Varanasi, Uttar Pradesh", avatar: "SN", bio: "Specializes in Ganga aarti and Vedic ceremonies." }
+        ];
+
+        let activeFilter = 'all';
+        const colors = ['#e67e22', '#4285f4', '#34a853', '#ea4335', '#fbbc04', '#8e44ad', '#1abc9c', '#e67e22'];
+
+        function updateStats(filteredMembers) {
+            const total = filteredMembers.length;
+            const purohits = filteredMembers.filter(m => m.role === 'purohit').length;
+            const sellers = filteredMembers.filter(m => m.role === 'seller').length;
+            const online = Math.min(Math.floor(Math.random() * 5) + 2, total);
+            document.getElementById('totalMembers').textContent = total;
+            document.getElementById('totalPurohits').textContent = purohits;
+            document.getElementById('totalSellers').textContent = sellers;
+            document.getElementById('onlineNow').textContent = online;
+        }
+
+        function renderMembers(memberList) {
+            const grid = document.getElementById('directoryGrid');
+            if (memberList.length === 0) {
+                grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--text-secondary); padding:60px 0;">No members found. Try a different search! 🔍</p>`;
+                updateStats([]);
+                return;
+            }
+            let html = '';
+            memberList.forEach((m, index) => {
+                const color = colors[index % colors.length];
+                const roleLabel = m.role.charAt(0).toUpperCase() + m.role.slice(1);
+                html += `
+                    <div class="member-card">
+                        <div class="member-header">
+                            <div class="avatar" style="background:${color};">
+                                ${m.avatar}
+                                <span class="role-badge ${m.role}">${m.role === 'seller' ? 'S' : m.role === 'purohit' ? 'P' : m.role === 'admin' ? 'A' : 'U'}</span>
+                            </div>
+                            <div class="member-info">
+                                <div class="member-name">${m.name}</div>
+                                <div class="member-role">${roleLabel}</div>
+                            </div>
+                        </div>
+                        <div class="member-location">📍 ${m.location}</div>
+                        <div class="member-badges">
+                            <span class="badge ${m.role}">${roleLabel}</span>
+                            ${m.role === 'seller' ? '<span class="badge seller">🛍️ Seller</span>' : ''}
+                            ${m.role === 'purohit' ? '<span class="badge purohit">🙏 Purohit</span>' : ''}
+                            ${m.role === 'admin' ? '<span class="badge admin">⭐ Admin</span>' : ''}
+                        </div>
+                        <div class="member-actions">
+                            <button onclick="openProfile('${m.name}', '${m.role}', '${m.location}', '${m.avatar}', '${m.bio || 'Member of the Madhwa Samaj community.'}', '${color}')">👤 View Profile</button>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+            updateStats(memberList);
+        }
+
+        function openProfile(name, role, location, avatar, bio, color) {
+            document.getElementById('modalAvatar').textContent = avatar;
+            document.getElementById('modalAvatar').style.background = color;
+            document.getElementById('modalName').textContent = name;
+            document.getElementById('modalRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+            document.getElementById('modalLocation').textContent = '📍 ' + location;
+            document.getElementById('modalBio').textContent = bio;
+            document.getElementById('profileModal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('profileModal').classList.remove('open');
+        }
+
+        function filterMembers() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = members.filter(m => {
+                const matchSearch = m.name.toLowerCase().includes(search) || m.location.toLowerCase().includes(search) || m.role.includes(search);
+                const matchFilter = activeFilter === 'all' || m.role === activeFilter;
+                return matchSearch && matchFilter;
+            });
+            renderMembers(filtered);
+        }
+
+        function filterByChip(filter, el) {
+            activeFilter = filter;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            filterMembers();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        fetch('components/header.html')
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('headerPlaceholder').innerHTML = data;
+                const currentPage = window.location.pathname.split('/').pop() || 'ms-directory.html';
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href === currentPage) link.classList.add('active');
+                    else link.classList.remove('active');
+                });
+            })
+            .catch(err => console.error('Failed to load header:', err));
+
+        renderMembers(members);
+
+        // Close modal on outside click
+        document.getElementById('profileModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+
+    <style>
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c2418;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+        .toast.show { opacity: 1; bottom: 120px; }
+        .site-footer {
+            background: #2c2418;
+            color: #b8a994;
+            padding: 32px 24px 24px;
+            text-align: center;
+            font-size: 13px;
+            margin-top: auto;
+        }
+        .site-footer .footer-mantra {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: #e6d5c4;
+            margin-bottom: 8px;
+        }
+        .site-footer .footer-copy {
+            font-size: 12px;
+            color: #8a7a6a;
+        }
+        @media (max-width: 480px) {
+            .site-footer { padding: 24px 16px 20px; }
+            .site-footer .footer-mantra { font-size: 14px; }
+            .modal-box { padding: 24px; }
+            .modal-box .modal-avatar { width: 64px; height: 64px; font-size: 26px; }
+        }
+    </style>
+</body>
+</html>
