@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Madhwa Samaj | Sacred Temples</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --madhwa-primary: #e67e22;
+            --madhwa-light: #f39c12;
+            --madhwa-dark: #d35400;
+            --google-blue: #4285f4;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc04;
+            --google-green: #34a853;
+            --bg-warm: #fefaf5;
+            --surface-white: #ffffff;
+            --text-primary: #2c2418;
+            --text-secondary: #7a5a3a;
+            --border-soft: #f0e2d4;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 14px rgba(230,126,34,0.06);
+            --shadow-lg: 0 8px 28px rgba(0,0,0,0.08);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-warm);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content {
+            flex: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px 24px 48px;
+            width: 100%;
+        }
+
+        /* ===== HERO ===== */
+        .temple-hero {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #fff8e1 100%);
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            margin-bottom: 32px;
+            text-align: center;
+            border: 1px solid rgba(230,126,34,0.12);
+        }
+
+        .temple-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .temple-hero h1 span {
+            color: var(--madhwa-primary);
+        }
+
+        .temple-hero p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 8px auto 0;
+        }
+
+        /* ===== SEARCH & FILTERS ===== */
+        .search-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .search-bar {
+            flex: 2;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 40px;
+            padding: 0 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--madhwa-primary);
+            box-shadow: 0 0 0 3px rgba(230,126,34,0.08);
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 12px 10px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+        }
+
+        .search-bar .search-icon {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .chip {
+            padding: 6px 18px;
+            border-radius: 40px;
+            background: white;
+            border: 1px solid var(--border-soft);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .chip:hover {
+            background: #fff3e0;
+            border-color: var(--madhwa-light);
+        }
+
+        .chip.active {
+            background: var(--madhwa-primary);
+            color: white;
+            border-color: var(--madhwa-primary);
+        }
+
+        /* ===== TEMPLE GRID ===== */
+        .temple-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .temple-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-soft);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .temple-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .temple-card .temple-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .temple-card .temple-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .temple-card .temple-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 20px;
+            background: #fff3e0;
+            color: var(--madhwa-primary);
+            white-space: nowrap;
+        }
+
+        .temple-card .temple-badge.ashta {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+
+        .temple-card .temple-badge.other {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .temple-card .temple-location {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .temple-card .temple-deity {
+            font-size: 13px;
+            color: var(--madhwa-primary);
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .temple-card .temple-matha {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .temple-card .temple-timings {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid var(--border-soft);
+        }
+
+        .temple-card .temple-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .temple-card .temple-actions button {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background: var(--madhwa-primary);
+            color: white;
+        }
+
+        .temple-card .temple-actions button:hover {
+            transform: scale(1.02);
+        }
+
+        .temple-card .temple-actions .btn-outline {
+            background: none;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-soft);
+        }
+
+        .temple-card .temple-actions .btn-outline:hover {
+            background: #fff3e0;
+            border-color: var(--madhwa-light);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .page-content {
+                padding: 20px 16px 40px;
+            }
+            .temple-hero {
+                padding: 24px 20px;
+            }
+            .temple-hero h1 {
+                font-size: 26px;
+            }
+            .temple-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .search-section {
+                flex-direction: column;
+            }
+            .search-bar {
+                width: 100%;
+            }
+            .filter-chips {
+                gap: 6px;
+            }
+            .chip {
+                font-size: 11px;
+                padding: 4px 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .temple-card .temple-name {
+                font-size: 16px;
+            }
+            .temple-card .temple-badge {
+                font-size: 10px;
+                padding: 2px 10px;
+            }
+            .temple-card .temple-actions {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="headerPlaceholder"></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+        <!-- Search -->
+        <div class="search-section">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search temple by name, location, or deity..." oninput="filterTemples()">
+            </div>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="filter-chips">
+            <span class="chip active" data-filter="all" onclick="filterByChip('all', this)">✨ All</span>
+            <span class="chip" data-filter="ashta" onclick="filterByChip('ashta', this)">🏛️ Ashta Matha Temples</span>
+            <span class="chip" data-filter="other" onclick="filterByChip('other', this)">🕉️ Other Madhwa Temples</span>
+        </div>
+
+        <!-- Temple Grid -->
+        <div class="temple-grid" id="templeGrid">
+            <!-- Rendered by JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- ===== SHARED FOOTER ===== -->
+    <footer class="site-footer">
+        <div class="footer-mantra">🙏 Hari Sarvottama, Vayu Jeevottama 🙏</div>
+        <div class="footer-copy">© 2026 Madhwa Samaj — Preserving the Dvaita Tradition</div>
+    </footer>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast">🛕 Temple details loaded!</div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // =============================================
+        // TEMPLE DATA
+        // =============================================
+        const templeData = [
+            {
+                id: 1,
+                name: "Udupi Shri Krishna Temple",
+                type: "ashta",
+                location: "Udupi, Karnataka",
+                deity: "Shri Krishna (Bala Krishna)",
+                matha: "Palimaru Matha",
+                timings: "5:00 AM - 9:00 PM"
+            },
+            {
+                id: 2,
+                name: "Shri Rama Temple, Palimaru",
+                type: "ashta",
+                location: "Palimaru, Udupi, Karnataka",
+                deity: "Shri Rama",
+                matha: "Palimaru Matha",
+                timings: "6:00 AM - 8:00 PM"
+            },
+            {
+                id: 3,
+                name: "Shri Krishna Temple, Adamaru",
+                type: "ashta",
+                location: "Adamaru, Udupi, Karnataka",
+                deity: "Chaturbhuja Kaliyamardana Krishna",
+                matha: "Adamaru Matha",
+                timings: "5:30 AM - 8:30 PM"
+            },
+            {
+                id: 4,
+                name: "Shri Krishna Temple, Krishnapura",
+                type: "ashta",
+                location: "Krishnapura, Udupi, Karnataka",
+                deity: "Kaliyamardana Krishna",
+                matha: "Krishnapura Matha",
+                timings: "6:00 AM - 8:00 PM"
+            },
+            {
+                id: 5,
+                name: "Shri Panduranga Vitthala Temple, Puttige",
+                type: "ashta",
+                location: "Puttige, Udupi, Karnataka",
+                deity: "Panduranga Vitthala",
+                matha: "Puttige Matha",
+                timings: "5:30 AM - 8:30 PM"
+            },
+            {
+                id: 6,
+                name: "Shri Vitthala Temple, Shiroor",
+                type: "ashta",
+                location: "Shiroor, Udupi, Karnataka",
+                deity: "Vitthala",
+                matha: "Shiroor Matha",
+                timings: "6:00 AM - 8:00 PM"
+            },
+            {
+                id: 7,
+                name: "Shri Bhuvaraha Temple, Sodhe",
+                type: "ashta",
+                location: "Sodhe, Sirsi, Karnataka",
+                deity: "Bhuvaraha",
+                matha: "Sodhe Matha",
+                timings: "6:00 AM - 7:30 PM"
+            },
+            {
+                id: 8,
+                name: "Shri Narasimha Temple, Kaniyooru",
+                type: "ashta",
+                location: "Kaniyooru, Udupi, Karnataka",
+                deity: "Narasimha",
+                matha: "Kaniyooru Matha",
+                timings: "5:30 AM - 8:30 PM"
+            },
+            {
+                id: 9,
+                name: "Shri Vitthala Temple, Pejavara",
+                type: "ashta",
+                location: "Pejavara, Udupi, Karnataka",
+                deity: "Vitthala",
+                matha: "Pejavara Matha",
+                timings: "6:00 AM - 8:00 PM"
+            },
+            {
+                id: 10,
+                name: "Shri Krishna Temple, Bengaluru (Uttaradi)",
+                type: "other",
+                location: "Bengaluru, Karnataka",
+                deity: "Shri Krishna",
+                matha: "Uttaradi Matha",
+                timings: "6:00 AM - 8:30 PM"
+            },
+            {
+                id: 11,
+                name: "Shri Panchamukhi Anjaneya Temple, Mantralayam",
+                type: "other",
+                location: "Mantralayam, Andhra Pradesh",
+                deity: "Panchamukhi Anjaneya",
+                matha: "Raghavendra Matha",
+                timings: "5:00 AM - 9:00 PM"
+            },
+            {
+                id: 12,
+                name: "Shri Rama Temple, Mantralayam",
+                type: "other",
+                location: "Mantralayam, Andhra Pradesh",
+                deity: "Shri Rama",
+                matha: "Raghavendra Matha",
+                timings: "5:30 AM - 8:30 PM"
+            },
+            {
+                id: 13,
+                name: "Shri Krishna Temple, Mumbai (Uttaradi)",
+                type: "other",
+                location: "Mumbai, Maharashtra",
+                deity: "Shri Krishna",
+                matha: "Uttaradi Matha",
+                timings: "6:30 AM - 8:00 PM"
+            },
+            {
+                id: 14,
+                name: "Shri Krishna Temple, Chennai (Uttaradi)",
+                type: "other",
+                location: "Chennai, Tamil Nadu",
+                deity: "Shri Krishna",
+                matha: "Uttaradi Matha",
+                timings: "6:00 AM - 8:00 PM"
+            }
+        ];
+
+        let activeFilter = 'all';
+
+        // =============================================
+        // RENDER TEMPLE CARDS
+        // =============================================
+        function renderTemples(temples) {
+            const grid = document.getElementById('templeGrid');
+            if (temples.length === 0) {
+                grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--text-secondary); padding:60px 0;">No temples found. Try a different search! 🔍</p>`;
+                return;
+            }
+
+            let html = '';
+            temples.forEach(t => {
+                const badgeClass = t.type === 'ashta' ? 'ashta' : 'other';
+                const badgeLabel = t.type === 'ashta' ? '🏛️ Ashta Matha Temple' : '🕉️ Madhwa Temple';
+
+                html += `
+                    <div class="temple-card" data-name="${t.name.toLowerCase()}" data-location="${t.location.toLowerCase()}" data-deity="${t.deity.toLowerCase()}" data-type="${t.type}">
+                        <div class="temple-header">
+                            <div class="temple-name">${t.name}</div>
+                            <span class="temple-badge ${badgeClass}">${badgeLabel}</span>
+                        </div>
+                        <div class="temple-location">📍 ${t.location}</div>
+                        <div class="temple-deity">🛕 ${t.deity}</div>
+                        <div class="temple-matha">🏛️ ${t.matha}</div>
+                        <div class="temple-timings">🕐 ${t.timings}</div>
+                        <div class="temple-actions">
+                            <button onclick="showToast('🛕 ${t.name} details loaded!')">📖 View Details</button>
+                            <button class="btn-outline" onclick="showToast('📍 ${t.location}')">🗺️ Directions</button>
+                            <button class="btn-outline" onclick="showToast('📞 Contact info for ${t.name}')">📞 Contact</button>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        // =============================================
+        // FILTER FUNCTIONS
+        // =============================================
+        function filterTemples() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = templeData.filter(t => {
+                const matchSearch = t.name.toLowerCase().includes(search) ||
+                                    t.location.toLowerCase().includes(search) ||
+                                    t.deity.toLowerCase().includes(search) ||
+                                    t.matha.toLowerCase().includes(search);
+                const matchFilter = activeFilter === 'all' || t.type === activeFilter;
+                return matchSearch && matchFilter;
+            });
+            renderTemples(filtered);
+        }
+
+        function filterByChip(filter, el) {
+            activeFilter = filter;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            filterTemples();
+        }
+
+        // =============================================
+        // TOAST
+        // =============================================
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // =============================================
+        // LOAD HEADER & INIT
+        // =============================================
+        fetch('components/header.html')
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('headerPlaceholder').innerHTML = data;
+                const currentPage = window.location.pathname.split('/').pop() || 'ms-temples.html';
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href === currentPage) link.classList.add('active');
+                    else link.classList.remove('active');
+                });
+            })
+            .catch(err => console.error('Failed to load header:', err));
+
+        // Initial render
+        renderTemples(templeData);
+    </script>
+
+    <style>
+        /* Toast styles */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c2418;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            bottom: 120px;
+        }
+
+        /* Footer styles */
+        .site-footer {
+            background: #2c2418;
+            color: #b8a994;
+            padding: 32px 24px 24px;
+            text-align: center;
+            font-size: 13px;
+            margin-top: auto;
+        }
+        .site-footer .footer-mantra {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: #e6d5c4;
+            margin-bottom: 8px;
+        }
+        .site-footer .footer-copy {
+            font-size: 12px;
+            color: #8a7a6a;
+        }
+        @media (max-width: 480px) {
+            .site-footer { padding: 24px 16px 20px; }
+            .site-footer .footer-mantra { font-size: 14px; }
+        }
+    </style>
+</body>
+</html>

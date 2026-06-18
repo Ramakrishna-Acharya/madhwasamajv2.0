@@ -1,0 +1,329 @@
+<!-- ====================================================== -->
+<!-- MADHWA SAMAJ - SHARED HEADER (Banner + Sticky Nav)    -->
+<!-- ====================================================== -->
+
+<!-- BANNER - With your image at the top -->
+<div class="madhwa-banner" id="madhwaBanner">
+    <div class="banner-content">
+        <!-- Banner Image -->
+        <img src="assets/images/banner.png" alt="Sri Jagadguru Madhwacharya Moola Maha Samstanam" class="banner-image">
+    </div>
+</div>
+
+<!-- STICKY NAV - Always visible -->
+<nav class="madhwa-nav" id="madhwaNav">
+    <div class="nav-container">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html" class="nav-link active">Home</a></li>
+            <li><a href="ms-about.html" class="nav-link">About</a></li>
+            <li><a href="ms-directory.html" class="nav-link">Community</a></li>
+            <li><a href="ms-purohit.html" class="nav-link">Purohit</a></li>
+            <li><a href="ms-marketplace.html" class="nav-link">Marketplace</a></li>
+            <li><a href="ms-mathas-network.html" class="nav-link">Mathas</a></li>
+            <li><a href="ms-temples.html" class="nav-link">Temples</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="signin-btn" id="showSignInBtn">Sign In</button>
+        </div>
+    </div>
+</nav>
+
+<style>
+    /* =============================================
+       BANNER + STICKY NAV - SHARED STYLES
+       ============================================= */
+
+    /* ----- BANNER ----- */
+    .madhwa-banner {
+        background: linear-gradient(135deg, #ffffff 0%, #fefaf5 100%);
+        border-bottom: 1px solid rgba(230, 126, 34, 0.08);
+        padding: 16px 24px 18px;
+        text-align: center;
+    }
+
+    .banner-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .banner-image {
+        max-width: 100%;
+        height: auto;
+        max-height: 100px;
+        display: block;
+        margin: 0 auto 12px;
+        object-fit: contain;
+    }
+
+    .banner-text {
+        text-align: center;
+    }
+
+    .banner-subtitle {
+        font-size: 14px;
+        font-weight: 400;
+        color: #7a5a3a;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .banner-title {
+        font-size: 34px;
+        font-weight: 700;
+        font-family: 'Playfair Display', serif;
+        color: #2c2418;
+        letter-spacing: -0.5px;
+        border-bottom: 3px solid #e67e22;
+        display: inline-block;
+        padding-bottom: 4px;
+        margin-bottom: 6px;
+    }
+
+    .banner-mantra {
+        font-size: 14px;
+        font-weight: 400;
+        color: #7a5a3a;
+        font-style: italic;
+        letter-spacing: 0.3px;
+    }
+
+    @media (min-width: 768px) {
+        .madhwa-banner {
+            padding: 20px 32px 24px;
+        }
+        .banner-image {
+            max-height: 140px;
+        }
+        .banner-subtitle {
+            font-size: 15px;
+        }
+        .banner-title {
+            font-size: 40px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .madhwa-banner {
+            padding: 12px 16px 12px;
+        }
+        .banner-image {
+            max-height: 70px;
+        }
+        .banner-title {
+            font-size: 26px;
+        }
+        .banner-subtitle {
+            font-size: 11px;
+        }
+        .banner-mantra {
+            font-size: 12px;
+        }
+    }
+
+    /* ----- STICKY NAV ----- */
+    .madhwa-nav {
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid #f0e2d4;
+        box-shadow: 0 2px 12px rgba(230, 126, 34, 0.04);
+        padding: 0 24px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    /* Hamburger */
+    .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 4px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+    }
+
+    .hamburger span {
+        width: 24px;
+        height: 2px;
+        background: #2c2418;
+        transition: 0.3s;
+        border-radius: 2px;
+    }
+
+    /* Nav Links */
+    .nav-links {
+        display: flex;
+        gap: 0;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: #2c2418;
+        font-weight: 500;
+        font-size: 14px;
+        padding: 10px 18px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .nav-links a:hover {
+        background: #fef0e6;
+        color: #e67e22;
+    }
+
+    .nav-links a.active {
+        background: #fef0e6;
+        color: #e67e22;
+        font-weight: 600;
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .signin-btn {
+        background: linear-gradient(135deg, #e67e22, #f39c12);
+        border: none;
+        color: white;
+        padding: 6px 18px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: transform 0.2s;
+        white-space: nowrap;
+    }
+
+    .signin-btn:hover {
+        transform: scale(1.02);
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+        .madhwa-nav {
+            padding: 0 16px;
+            height: 52px;
+        }
+
+        .hamburger {
+            display: flex;
+        }
+
+        .nav-links {
+            display: none;
+            position: absolute;
+            top: 52px;
+            left: 0;
+            width: 100%;
+            background: white;
+            flex-direction: column;
+            padding: 16px 24px;
+            gap: 4px;
+            border-bottom: 1px solid #f0e2d4;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            max-height: calc(100vh - 52px);
+            overflow-y: auto;
+        }
+
+        .nav-links.active {
+            display: flex;
+        }
+
+        .nav-links a {
+            padding: 12px 16px;
+            width: 100%;
+            font-size: 15px;
+            border-radius: 8px;
+        }
+
+        .nav-actions .signin-btn {
+            padding: 4px 14px;
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .madhwa-nav {
+            height: 48px;
+            padding: 0 12px;
+        }
+        .nav-links {
+            top: 48px;
+        }
+        .nav-links a {
+            font-size: 14px;
+            padding: 10px 14px;
+        }
+        .signin-btn {
+            font-size: 11px;
+            padding: 4px 12px;
+        }
+    }
+</style>
+
+<script>
+    // Hamburger menu toggle
+    (function() {
+        const hamburger = document.getElementById('hamburgerBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        if (hamburger && navLinks) {
+            hamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navLinks.classList.toggle('active');
+            });
+
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+                    navLinks.classList.remove('active');
+                }
+            });
+        }
+
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === currentPage || (currentPage === 'index.html' && href === 'index.html')) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    })();
+</script>
