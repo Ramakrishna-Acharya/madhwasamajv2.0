@@ -346,8 +346,9 @@
             .then(res => res.text())
             .then(data => {
                 document.getElementById('headerPlaceholder').innerHTML = data;
-                if (typeof window.initHamburger === 'function') window.initHamburger();
-                if (typeof window.highlightCurrentPage === 'function') window.highlightCurrentPage();
+                // CALL THESE AFTER HEADER LOADS
+                initHamburger();
+                highlightCurrentPage();
             })
             .catch(err => console.error('Failed to load header:', err));
     </script>

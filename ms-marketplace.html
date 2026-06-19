@@ -563,13 +563,14 @@
         checkCartReminder();
         document.getElementById('cartModal').addEventListener('click', function(e) { if (e.target === this) closeCart(); });
         fetch('components/header.html')
-            .then(res => res.text())
-            .then(data => {
-                document.getElementById('headerPlaceholder').innerHTML = data;
-                if (typeof window.initHamburger === 'function') window.initHamburger();
-                if (typeof window.highlightCurrentPage === 'function') window.highlightCurrentPage();
-            })
-            .catch(err => console.error('Failed to load header:', err));
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById('headerPlaceholder').innerHTML = data;
+        // CALL THESE AFTER HEADER LOADS
+        initHamburger();
+        highlightCurrentPage();
+    })
+    .catch(err => console.error('Failed to load header:', err));
     </script>
     <style>
         .site-footer {

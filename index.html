@@ -42,7 +42,6 @@
             width: 100%;
         }
 
-        /* Hero */
         .hero {
             background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #fff8e1 100%);
             border-radius: var(--radius);
@@ -89,7 +88,6 @@
         }
         .hero .cta-group .btn-outline:hover { background: #fff3e0; }
 
-        /* Vision */
         .vision {
             background: white;
             border-radius: var(--radius);
@@ -112,7 +110,6 @@
             line-height: 1.7;
         }
 
-        /* Stats Bar */
         .stats-bar {
             display: flex;
             flex-wrap: wrap;
@@ -138,7 +135,6 @@
             font-size: 18px;
         }
 
-        /* Today's Wisdom */
         .wisdom {
             background: linear-gradient(135deg, #fff3e0, #fff8e8);
             border-radius: var(--radius);
@@ -170,7 +166,6 @@
             font-style: italic;
         }
 
-        /* Quick Actions */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -194,7 +189,6 @@
         .quick-actions .action-card .icon { font-size: 32px; }
         .quick-actions .action-card .title { font-weight: 600; margin-top: 6px; }
 
-        /* Activity Feed */
         .activity-feed {
             background: white;
             border-radius: var(--radius);
@@ -218,7 +212,6 @@
         .activity-feed .feed-item:last-child { border-bottom: none; }
         .activity-feed .feed-item .highlight { color: var(--text-primary); font-weight: 500; }
 
-        /* Donation */
         .donation-section {
             background: linear-gradient(135deg, #fff3e0, #ffe0b2);
             border-radius: var(--radius);
@@ -249,7 +242,6 @@
         }
         .donation-section button:hover { transform: scale(1.02); }
 
-        /* Modal */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -358,18 +350,18 @@
     <div id="headerPlaceholder"></div>
 
     <main class="page-content">
+        <section class="hero">
+            <h1>Preserve. Connect. <span>Contribute.</span></h1>
+            <p>Madhwa Samaj is a living tradition — a digital home for devotees, purohits, seekers, and believers.</p>
+            <div class="cta-group">
+                <button onclick="document.getElementById('donationModal').classList.add('open')">🙏 Donate Now</button>
+                <button class="btn-outline" onclick="window.location.href='ms-directory.html'">👥 Join Community</button>
+            </div>
+        </section>
 
         <section class="vision">
             <h2>Our <span>Vision</span></h2>
-            <p><b>Build a digital home for the Madhwa community — to preserve our tradition, connect our people, and contribute to our tradition for generations to come.</b></p>
-        </section>
-
-
-        <section class="wisdom">
-            <div class="label">✨ Today's Wisdom</div>
-            <div class="verse">"He who knows Vishnu as the highest, the Jivas as distinct, and the world as real — he alone is truly liberated."</div>
-            <div class="meaning">— Shri Madhwacharya, Anubhashya</div>
-            <div class="reflection">Reflection: Truth is not a concept — it is a lived experience. Seek clarity, not comfort.</div>
+            <p><b>Build a digital home for the Madhwa community — to preserve our tradition, connect our people, and contribute to a thriving tradition for generations to come.</b></p>
         </section>
 
         <div class="stats-bar">
@@ -378,6 +370,13 @@
             <div class="stat-item">🛍️ Sellers: <span class="num" id="totalSellers">32</span></div>
             <div class="stat-item">🟢 Online Now: <span class="num" id="onlineNow">23</span></div>
         </div>
+
+        <section class="wisdom">
+            <div class="label">✨ Today's Wisdom</div>
+            <div class="verse">"He who knows Vishnu as the highest, the Jivas as distinct, and the world as real — he alone is truly liberated."</div>
+            <div class="meaning">— Shri Madhwacharya, Anubhashya</div>
+            <div class="reflection">Reflection: Truth is not a concept — it is a lived experience. Seek clarity, not comfort.</div>
+        </section>
 
         <section class="quick-actions">
             <div class="action-card" onclick="window.location.href='ms-purohit.html'">
@@ -442,6 +441,56 @@
     <div class="toast" id="toast">✨ Thank you for your support!</div>
 
     <script>
+        // =============================================
+        // HAMBURGER — DEFINED IN PAGE, NOT IN HEADER
+        // =============================================
+        function initHamburger() {
+            const hamburger = document.getElementById('hamburgerBtn');
+            const navLinks = document.getElementById('navLinks');
+            if (!hamburger || !navLinks) return;
+
+            // Remove old listeners by cloning
+            const newHamburger = hamburger.cloneNode(true);
+            hamburger.parentNode.replaceChild(newHamburger, hamburger);
+            const newNavLinks = navLinks.cloneNode(true);
+            navLinks.parentNode.replaceChild(newNavLinks, navLinks);
+
+            const finalHamburger = document.getElementById('hamburgerBtn');
+            const finalNavLinks = document.getElementById('navLinks');
+
+            finalHamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                finalNavLinks.classList.toggle('active');
+            });
+
+            finalNavLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    finalNavLinks.classList.remove('active');
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!finalNavLinks.contains(e.target) && !finalHamburger.contains(e.target)) {
+                    finalNavLinks.classList.remove('active');
+                }
+            });
+        }
+
+        function highlightCurrentPage() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPage || (currentPage === 'index.html' && href === 'index.html')) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        // =============================================
+        // DONATION LOGIC
+        // =============================================
         let selectedAmount = 0;
 
         function selectAmount(el, amount) {
@@ -486,13 +535,15 @@
             if (e.target === this) this.classList.remove('open');
         });
 
-        // Load header
+        // =============================================
+        // LOAD HEADER — THEN INIT HAMBURGER
+        // =============================================
         fetch('components/header.html')
             .then(res => res.text())
             .then(data => {
                 document.getElementById('headerPlaceholder').innerHTML = data;
-                if (typeof window.initHamburger === 'function') window.initHamburger();
-                if (typeof window.highlightCurrentPage === 'function') window.highlightCurrentPage();
+                initHamburger();
+                highlightCurrentPage();
             })
             .catch(err => console.error('Failed to load header:', err));
     </script>

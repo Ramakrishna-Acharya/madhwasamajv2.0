@@ -365,6 +365,9 @@
     </footer>
     <div class="toast" id="toast"></div>
     <script>
+        // =============================================
+        // SIDEBAR NAVIGATION
+        // =============================================
         function showSec(id, el) {
             document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -374,6 +377,7 @@
                 document.querySelector('.content-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
+
         let tt;
         function showToast(msg) {
             const t = document.getElementById('toast');
@@ -382,12 +386,63 @@
             clearTimeout(tt);
             tt = setTimeout(() => t.classList.remove('show'), 3000);
         }
+
+        // =============================================
+        // HAMBURGER — DEFINED IN PAGE
+        // =============================================
+        function initHamburger() {
+            const hamburger = document.getElementById('hamburgerBtn');
+            const navLinks = document.getElementById('navLinks');
+            if (!hamburger || !navLinks) return;
+
+            // Remove old listeners by cloning
+            const newHamburger = hamburger.cloneNode(true);
+            hamburger.parentNode.replaceChild(newHamburger, hamburger);
+            const newNavLinks = navLinks.cloneNode(true);
+            navLinks.parentNode.replaceChild(newNavLinks, navLinks);
+
+            const finalHamburger = document.getElementById('hamburgerBtn');
+            const finalNavLinks = document.getElementById('navLinks');
+
+            finalHamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                finalNavLinks.classList.toggle('active');
+            });
+
+            finalNavLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    finalNavLinks.classList.remove('active');
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!finalNavLinks.contains(e.target) && !finalHamburger.contains(e.target)) {
+                    finalNavLinks.classList.remove('active');
+                }
+            });
+        }
+
+        function highlightCurrentPage() {
+            const currentPage = window.location.pathname.split('/').pop() || 'ms-about.html';
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        // =============================================
+        // LOAD HEADER
+        // =============================================
         fetch('components/header.html')
             .then(res => res.text())
             .then(data => {
                 document.getElementById('headerPlaceholder').innerHTML = data;
-                if (typeof window.initHamburger === 'function') window.initHamburger();
-                if (typeof window.highlightCurrentPage === 'function') window.highlightCurrentPage();
+                initHamburger();
+                highlightCurrentPage();
             })
             .catch(err => console.error('Failed to load header:', err));
     </script>
