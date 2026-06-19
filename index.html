@@ -6,11 +6,7 @@
     <title>Madhwa Samaj — Preserve. Connect. Contribute.</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --madhwa-primary: #e67e22;
             --madhwa-light: #f39c12;
@@ -363,19 +359,12 @@
 
     <main class="page-content">
 
-        <!-- Vision / Mission -->
         <section class="vision">
             <h2>Our <span>Vision</span></h2>
-            <p><b>Build a digital home for the Madhwa community — to preserve our tradition, connect our people, and contribute to a thriving tradition for generations to come.</p>
+            <p><b>Build a digital home for the Madhwa community — to preserve our tradition, connect our people, and contribute to our tradition for generations to come.</b></p>
         </section>
-        <!-- Stats -->
-        <div class="stats-bar">
-            <div class="stat-item">👥 Total Members: <span class="num" id="totalMembers">1,247</span></div>
-            <div class="stat-item">🙏 Purohits: <span class="num" id="totalPurohits">48</span></div>
-            <div class="stat-item">🛍️ Sellers: <span class="num" id="totalSellers">32</span></div>
-            <div class="stat-item">🟢 Online Now: <span class="num" id="onlineNow">23</span></div>
-        </div>
-        <!-- Today's Wisdom -->
+
+
         <section class="wisdom">
             <div class="label">✨ Today's Wisdom</div>
             <div class="verse">"He who knows Vishnu as the highest, the Jivas as distinct, and the world as real — he alone is truly liberated."</div>
@@ -383,7 +372,13 @@
             <div class="reflection">Reflection: Truth is not a concept — it is a lived experience. Seek clarity, not comfort.</div>
         </section>
 
-        <!-- Quick Actions -->
+        <div class="stats-bar">
+            <div class="stat-item">👥 Total Members: <span class="num" id="totalMembers">1,247</span></div>
+            <div class="stat-item">🙏 Purohits: <span class="num" id="totalPurohits">48</span></div>
+            <div class="stat-item">🛍️ Sellers: <span class="num" id="totalSellers">32</span></div>
+            <div class="stat-item">🟢 Online Now: <span class="num" id="onlineNow">23</span></div>
+        </div>
+
         <section class="quick-actions">
             <div class="action-card" onclick="window.location.href='ms-purohit.html'">
                 <div class="icon">🙏</div>
@@ -403,7 +398,6 @@
             </div>
         </section>
 
-        <!-- Activity Feed -->
         <section class="activity-feed">
             <h3>📡 Community Pulse</h3>
             <div class="feed-item"><span><span class="highlight">Ram Jio</span> listed a new product — Lord Krishna Idol</span> <span>2 min ago</span></div>
@@ -413,7 +407,6 @@
             <div class="feed-item"><span><span class="highlight">Krishna Bhatta</span> added a new service — Rudra Abhishekam</span> <span>3 hours ago</span></div>
         </section>
 
-        <!-- Donation -->
         <section class="donation-section">
             <h3>🙏 Support the Tradition</h3>
             <p>Your contribution helps preserve scriptures, support purohits, and build community spaces.</p>
@@ -441,7 +434,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-mantra">🙏 Hari Sarvottama, Vayu Jeevottama 🙏</div>
         <div class="footer-copy">© 2026 Madhwa Samaj — Preserving the Dvaita Tradition</div>
@@ -475,9 +467,7 @@
                 showToast('Please select or enter a valid amount (minimum ₹10).');
                 return;
             }
-            // Razorpay integration placeholder
             showToast(`🔒 Redirecting to Razorpay for ₹${finalAmount}...`);
-            // In production: razorpay checkout
             setTimeout(() => {
                 document.getElementById('donationModal').classList.remove('open');
                 showToast('🙏 Thank you for your generous donation!');
@@ -492,7 +482,6 @@
             toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Close modal on outside click
         document.getElementById('donationModal').addEventListener('click', function(e) {
             if (e.target === this) this.classList.remove('open');
         });
@@ -502,15 +491,8 @@
             .then(res => res.text())
             .then(data => {
                 document.getElementById('headerPlaceholder').innerHTML = data;
-                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-                document.querySelectorAll('.nav-links a').forEach(link => {
-                    const href = link.getAttribute('href');
-                    if (href === currentPage || (currentPage === 'index.html' && href === 'index.html')) {
-                        link.classList.add('active');
-                    } else {
-                        link.classList.remove('active');
-                    }
-                });
+                if (typeof window.initHamburger === 'function') window.initHamburger();
+                if (typeof window.highlightCurrentPage === 'function') window.highlightCurrentPage();
             })
             .catch(err => console.error('Failed to load header:', err));
     </script>
@@ -560,566 +542,4 @@
         }
     </style>
 </body>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Madhwa Samaj — Preserve. Connect. Contribute.</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        :root {
-            --madhwa-primary: #e67e22;
-            --madhwa-light: #f39c12;
-            --madhwa-dark: #d35400;
-            --google-blue: #4285f4;
-            --google-red: #ea4335;
-            --google-yellow: #fbbc04;
-            --google-green: #34a853;
-            --bg-warm: #fefaf5;
-            --surface-white: #ffffff;
-            --text-primary: #2c2418;
-            --text-secondary: #7a5a3a;
-            --border-soft: #f0e2d4;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 14px rgba(230,126,34,0.06);
-            --shadow-lg: 0 8px 28px rgba(0,0,0,0.08);
-            --radius: 16px;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-warm);
-            color: var(--text-primary);
-            line-height: 1.5;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .page-content {
-            flex: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 28px 24px 48px;
-            width: 100%;
-        }
-
-        /* Hero */
-        .hero {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #fff8e1 100%);
-            border-radius: var(--radius);
-            padding: 48px 32px;
-            margin-bottom: 32px;
-            text-align: center;
-            border: 1px solid rgba(230,126,34,0.12);
-        }
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 38px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .hero h1 span { color: var(--madhwa-primary); }
-        .hero p {
-            font-size: 18px;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 12px auto 20px;
-        }
-        .hero .cta-group {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .hero .cta-group button {
-            padding: 10px 28px;
-            border: none;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            background: var(--madhwa-primary);
-            color: white;
-        }
-        .hero .cta-group button:hover { transform: scale(1.02); }
-        .hero .cta-group .btn-outline {
-            background: none;
-            color: var(--text-primary);
-            border: 1px solid var(--border-soft);
-        }
-        .hero .cta-group .btn-outline:hover { background: #fff3e0; }
-
-        /* Vision */
-        .vision {
-            background: white;
-            border-radius: var(--radius);
-            padding: 32px;
-            margin-bottom: 32px;
-            border: 1px solid var(--border-soft);
-            text-align: center;
-        }
-        .vision h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            margin-bottom: 12px;
-        }
-        .vision h2 span { color: var(--madhwa-primary); }
-        .vision p {
-            font-size: 16px;
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-
-        /* Stats Bar */
-        .stats-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px 32px;
-            background: white;
-            border: 1px solid var(--border-soft);
-            border-radius: var(--radius);
-            padding: 16px 24px;
-            margin-bottom: 28px;
-            box-shadow: var(--shadow-sm);
-            justify-content: center;
-        }
-        .stats-bar .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        .stats-bar .stat-item .num {
-            font-weight: 700;
-            color: var(--text-primary);
-            font-size: 18px;
-        }
-
-        /* Today's Wisdom */
-        .wisdom {
-            background: linear-gradient(135deg, #fff3e0, #fff8e8);
-            border-radius: var(--radius);
-            padding: 24px 28px;
-            margin-bottom: 28px;
-            border-left: 4px solid var(--madhwa-primary);
-        }
-        .wisdom .label {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--madhwa-primary);
-        }
-        .wisdom .verse {
-            font-size: 20px;
-            font-weight: 500;
-            font-family: 'Playfair Display', serif;
-            margin: 6px 0 4px;
-        }
-        .wisdom .meaning {
-            font-size: 15px;
-            color: var(--text-secondary);
-        }
-        .wisdom .reflection {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 8px;
-            font-style: italic;
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-        .quick-actions .action-card {
-            background: white;
-            border-radius: var(--radius);
-            padding: 20px;
-            text-align: center;
-            border: 1px solid var(--border-soft);
-            box-shadow: var(--shadow-sm);
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .quick-actions .action-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
-        }
-        .quick-actions .action-card .icon { font-size: 32px; }
-        .quick-actions .action-card .title { font-weight: 600; margin-top: 6px; }
-
-        /* Activity Feed */
-        .activity-feed {
-            background: white;
-            border-radius: var(--radius);
-            padding: 24px;
-            margin-bottom: 28px;
-            border: 1px solid var(--border-soft);
-        }
-        .activity-feed h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 20px;
-            margin-bottom: 12px;
-        }
-        .activity-feed .feed-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-soft);
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        .activity-feed .feed-item:last-child { border-bottom: none; }
-        .activity-feed .feed-item .highlight { color: var(--text-primary); font-weight: 500; }
-
-        /* Donation */
-        .donation-section {
-            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
-            border-radius: var(--radius);
-            padding: 32px;
-            text-align: center;
-            border: 1px solid rgba(230,126,34,0.12);
-        }
-        .donation-section h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-        }
-        .donation-section p {
-            font-size: 15px;
-            color: var(--text-secondary);
-            max-width: 500px;
-            margin: 8px auto 16px;
-        }
-        .donation-section button {
-            padding: 10px 32px;
-            border: none;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            background: var(--madhwa-primary);
-            color: white;
-            transition: transform 0.2s;
-        }
-        .donation-section button:hover { transform: scale(1.02); }
-
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-overlay.open { display: flex; }
-        .modal-box {
-            background: white;
-            border-radius: var(--radius);
-            max-width: 440px;
-            width: 92%;
-            padding: 32px;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-        }
-        .modal-box h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 26px;
-            margin-bottom: 8px;
-        }
-        .modal-box p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-        }
-        .modal-box .amount-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-        .modal-box .amount-grid button {
-            padding: 10px;
-            border: 1px solid var(--border-soft);
-            border-radius: 10px;
-            background: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .modal-box .amount-grid button:hover { border-color: var(--madhwa-primary); background: #fff3e0; }
-        .modal-box .amount-grid button.selected { border-color: var(--madhwa-primary); background: var(--madhwa-primary); color: white; }
-        .modal-box .custom-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-soft);
-            border-radius: 10px;
-            margin-bottom: 16px;
-            font-size: 14px;
-        }
-        .modal-box .btn-donate {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 40px;
-            background: var(--madhwa-primary);
-            color: white;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .modal-box .btn-close {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            margin-top: 12px;
-            cursor: pointer;
-        }
-        .modal-box .impact {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-soft);
-        }
-
-        @media (max-width: 768px) {
-            .page-content { padding: 20px 16px 40px; }
-            .hero { padding: 32px 20px; }
-            .hero h1 { font-size: 28px; }
-            .vision h2 { font-size: 22px; }
-            .stats-bar { gap: 12px 20px; }
-            .stats-bar .stat-item { font-size: 12px; }
-            .stats-bar .stat-item .num { font-size: 16px; }
-            .modal-box .amount-grid { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 480px) {
-            .hero h1 { font-size: 24px; }
-            .hero p { font-size: 15px; }
-            .quick-actions { grid-template-columns: 1fr 1fr; }
-            .modal-box .amount-grid { grid-template-columns: 1fr 1fr; }
-            .modal-box { padding: 24px; }
-        }
-    </style>
-</head>
-<body>
-    <!-- Shared Header -->
-    <div id="headerPlaceholder"></div>
-
-    <main class="page-content">
-
-        <!-- Vision / Mission -->
-        <section class="vision">
-            <h2>Our <span>Vision</span></h2>
-            <p><b>Build a digital home for the Madhwa community — to preserve our tradition, connect our people, and contribute to a thriving tradition for generations to come.</p>
-        </section>
-        <!-- Stats -->
-        <div class="stats-bar">
-            <div class="stat-item">👥 Total Members: <span class="num" id="totalMembers">1,247</span></div>
-            <div class="stat-item">🙏 Purohits: <span class="num" id="totalPurohits">48</span></div>
-            <div class="stat-item">🛍️ Sellers: <span class="num" id="totalSellers">32</span></div>
-            <div class="stat-item">🟢 Online Now: <span class="num" id="onlineNow">23</span></div>
-        </div>
-        <!-- Today's Wisdom -->
-        <section class="wisdom">
-            <div class="label">✨ Today's Wisdom</div>
-            <div class="verse">"He who knows Vishnu as the highest, the Jivas as distinct, and the world as real — he alone is truly liberated."</div>
-            <div class="meaning">— Shri Madhwacharya, Anubhashya</div>
-            <div class="reflection">Reflection: Truth is not a concept — it is a lived experience. Seek clarity, not comfort.</div>
-        </section>
-
-        <!-- Quick Actions -->
-        <section class="quick-actions">
-            <div class="action-card" onclick="window.location.href='ms-purohit.html'">
-                <div class="icon">🙏</div>
-                <div class="title">Find a Purohit</div>
-            </div>
-            <div class="action-card" onclick="window.location.href='ms-marketplace.html'">
-                <div class="icon">🛍️</div>
-                <div class="title">Shop at the Madhwa Market</div>
-            </div>
-            <div class="action-card" onclick="window.location.href='ms-mathas-network.html'">
-                <div class="icon">🏛️</div>
-                <div class="title">Explore Mathas</div>
-            </div>
-            <div class="action-card" onclick="window.location.href='ms-directory.html'">
-                <div class="icon">👥</div>
-                <div class="title">Community Directory</div>
-            </div>
-        </section>
-
-        <!-- Activity Feed -->
-        <section class="activity-feed">
-            <h3>📡 Community Pulse</h3>
-            <div class="feed-item"><span><span class="highlight">Ram Jio</span> listed a new product — Lord Krishna Idol</span> <span>2 min ago</span></div>
-            <div class="feed-item"><span><span class="highlight">Rama Krishna</span> joined as a Purohit from Udupi</span> <span>15 min ago</span></div>
-            <div class="feed-item"><span>5 new members joined this week</span> <span>Today</span></div>
-            <div class="feed-item"><span><span class="highlight">Sita Devi</span> donated ₹2,500 for temple renovation</span> <span>1 hour ago</span></div>
-            <div class="feed-item"><span><span class="highlight">Krishna Bhatta</span> added a new service — Rudra Abhishekam</span> <span>3 hours ago</span></div>
-        </section>
-
-        <!-- Donation -->
-        <section class="donation-section">
-            <h3>🙏 Support the Tradition</h3>
-            <p>Your contribution helps preserve scriptures, support purohits, and build community spaces.</p>
-            <button onclick="document.getElementById('donationModal').classList.add('open')">Donate Now</button>
-        </section>
-    </main>
-
-    <!-- Donation Modal -->
-    <div class="modal-overlay" id="donationModal">
-        <div class="modal-box">
-            <h2>🙏 Donate</h2>
-            <p>Choose an amount to support the Madhwa Samaj community.</p>
-            <div class="amount-grid">
-                <button onclick="selectAmount(this, 500)">₹500</button>
-                <button onclick="selectAmount(this, 1000)">₹1,000</button>
-                <button onclick="selectAmount(this, 2500)">₹2,500</button>
-                <button onclick="selectAmount(this, 5000)">₹5,000</button>
-                <button onclick="selectAmount(this, 10000)">₹10,000</button>
-                <button onclick="selectAmount(this, 'custom')">Custom</button>
-            </div>
-            <input type="number" class="custom-input" id="customAmount" placeholder="Enter custom amount (₹)" style="display:none;" />
-            <button class="btn-donate" onclick="processDonation()">Donate with Razorpay</button>
-            <button class="btn-close" onclick="document.getElementById('donationModal').classList.remove('open')">Cancel</button>
-            <div class="impact">💚 Your donation supports temple renovations, purohit training, and community events.</div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="footer-mantra">🙏 Hari Sarvottama, Vayu Jeevottama 🙏</div>
-        <div class="footer-copy">© 2026 Madhwa Samaj — Preserving the Dvaita Tradition</div>
-    </footer>
-
-    <div class="toast" id="toast">✨ Thank you for your support!</div>
-
-    <script>
-        let selectedAmount = 0;
-
-        function selectAmount(el, amount) {
-            document.querySelectorAll('.amount-grid button').forEach(b => b.classList.remove('selected'));
-            el.classList.add('selected');
-            if (amount === 'custom') {
-                document.getElementById('customAmount').style.display = 'block';
-                document.getElementById('customAmount').focus();
-                selectedAmount = 0;
-            } else {
-                document.getElementById('customAmount').style.display = 'none';
-                selectedAmount = amount;
-            }
-        }
-
-        function processDonation() {
-            const custom = document.getElementById('customAmount').value;
-            let finalAmount = selectedAmount;
-            if (custom && parseInt(custom) > 0) {
-                finalAmount = parseInt(custom);
-            }
-            if (!finalAmount || finalAmount < 10) {
-                showToast('Please select or enter a valid amount (minimum ₹10).');
-                return;
-            }
-            // Razorpay integration placeholder
-            showToast(`🔒 Redirecting to Razorpay for ₹${finalAmount}...`);
-            // In production: razorpay checkout
-            setTimeout(() => {
-                document.getElementById('donationModal').classList.remove('open');
-                showToast('🙏 Thank you for your generous donation!');
-            }, 1500);
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            clearTimeout(toast._timer);
-            toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // Close modal on outside click
-        document.getElementById('donationModal').addEventListener('click', function(e) {
-            if (e.target === this) this.classList.remove('open');
-        });
-
-        // Load header
-        fetch('components/header.html')
-            .then(res => res.text())
-            .then(data => {
-                document.getElementById('headerPlaceholder').innerHTML = data;
-                // Re-run hamburger and highlight after header loads
-                if (typeof window.initHamburger === 'function') {
-                    window.initHamburger();
-                }
-                if (typeof window.highlightCurrentPage === 'function') {
-                    window.highlightCurrentPage();
-                }
-            })
-            .catch(err => console.error('Failed to load header:', err));
-    </script>
-
-    <style>
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2c2418;
-            color: white;
-            padding: 14px 28px;
-            border-radius: 40px;
-            font-size: 13px;
-            font-weight: 500;
-            box-shadow: 0 8px 28px rgba(0,0,0,0.2);
-            z-index: 300;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s ease;
-        }
-        .toast.show { opacity: 1; bottom: 120px; }
-        .site-footer {
-            background: #2c2418;
-            color: #b8a994;
-            padding: 32px 24px 24px;
-            text-align: center;
-            font-size: 13px;
-            margin-top: auto;
-        }
-        .site-footer .footer-mantra {
-            font-family: 'Playfair Display', serif;
-            font-size: 16px;
-            font-style: italic;
-            color: #e6d5c4;
-            margin-bottom: 8px;
-        }
-        .site-footer .footer-copy {
-            font-size: 12px;
-            color: #8a7a6a;
-        }
-        @media (max-width: 480px) {
-            .site-footer { padding: 24px 16px 20px; }
-            .site-footer .footer-mantra { font-size: 14px; }
-            .modal-box .amount-grid { grid-template-columns: 1fr 1fr; }
-        }
-    </style>
-</body>
->>>>>>> 28d485dcd45a46610de46f3a1a6097188c233257
 </html>
