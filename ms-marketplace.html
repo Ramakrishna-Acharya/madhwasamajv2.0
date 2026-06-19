@@ -901,6 +901,948 @@
             .then(res => res.text())
             .then(data => {
                 document.getElementById('headerPlaceholder').innerHTML = data;
+                // Re-run hamburger and highlight after header loads
+                if (typeof window.initHamburger === 'function') {
+                    window.initHamburger();
+                }
+                if (typeof window.highlightCurrentPage === 'function') {
+                    window.highlightCurrentPage();
+                }
+            })
+            .catch(err => console.error('Failed to load header:', err));
+    </script>
+
+    <style>
+        /* Footer styles */
+        .site-footer {
+            background: #2c2418;
+            color: #b8a994;
+            padding: 32px 24px 24px;
+            text-align: center;
+            font-size: 13px;
+            margin-top: auto;
+        }
+        .site-footer .footer-mantra {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: #e6d5c4;
+            margin-bottom: 8px;
+        }
+        .site-footer .footer-copy {
+            font-size: 12px;
+            color: #8a7a6a;
+        }
+        @media (max-width: 480px) {
+            .site-footer { padding: 24px 16px 20px; }
+            .site-footer .footer-mantra { font-size: 14px; }
+        }
+    </style>
+</body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Madhwa Samaj | Marketplace — Sacred Bazaar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --madhwa-primary: #e67e22;
+            --madhwa-light: #f39c12;
+            --madhwa-dark: #d35400;
+            --google-blue: #4285f4;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc04;
+            --google-green: #34a853;
+            --bg-warm: #fefaf5;
+            --surface-white: #ffffff;
+            --text-primary: #2c2418;
+            --text-secondary: #7a5a3a;
+            --border-soft: #f0e2d4;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 14px rgba(230,126,34,0.06);
+            --shadow-lg: 0 8px 28px rgba(0,0,0,0.08);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-warm);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content {
+            flex: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px 24px 48px;
+            width: 100%;
+        }
+
+        /* ===== HERO BANNER ===== */
+        .marketplace-hero {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #fff8e1 100%);
+            border-radius: var(--radius);
+            padding: 40px 36px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            border: 1px solid rgba(230,126,34,0.12);
+            box-shadow: var(--shadow-md);
+        }
+
+        .marketplace-hero .hero-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .marketplace-hero .hero-text h1 span {
+            color: var(--madhwa-primary);
+        }
+
+        .marketplace-hero .hero-text p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .hero-cta {
+            background: linear-gradient(135deg, var(--madhwa-primary), var(--madhwa-light));
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .hero-cta:hover {
+            transform: scale(1.02);
+        }
+
+        /* ===== SEARCH BAR ===== */
+        .search-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .search-bar {
+            flex: 2;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 40px;
+            padding: 0 18px;
+            box-shadow: var(--shadow-sm);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--madhwa-primary);
+            box-shadow: 0 0 0 3px rgba(230,126,34,0.08);
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 12px 10px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+        }
+
+        .search-bar .search-icon {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .filter-dropdown {
+            flex: 1;
+            min-width: 140px;
+            padding: 10px 16px;
+            border: 1px solid var(--border-soft);
+            border-radius: 40px;
+            background: white;
+            font-size: 13px;
+            outline: none;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .filter-dropdown:focus {
+            border-color: var(--madhwa-primary);
+        }
+
+        /* ===== CATEGORY CHIPS ===== */
+        .category-chips {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 28px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            flex-wrap: nowrap;
+        }
+
+        .category-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip {
+            padding: 8px 20px;
+            border-radius: 40px;
+            background: white;
+            border: 1px solid var(--border-soft);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .chip:hover {
+            background: #fff3e0;
+            border-color: var(--madhwa-light);
+        }
+
+        .chip.active {
+            background: var(--madhwa-primary);
+            color: white;
+            border-color: var(--madhwa-primary);
+        }
+
+        /* ===== PRODUCT GRID ===== */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-soft);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: #f5f0eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: var(--text-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image .placeholder-text {
+            font-size: 14px;
+            color: #9a9aaa;
+            font-weight: 500;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            background: var(--madhwa-primary);
+            letter-spacing: 0.3px;
+        }
+
+        .product-badge.featured {
+            background: var(--google-red);
+        }
+
+        .product-badge.discount {
+            background: var(--google-green);
+        }
+
+        .product-details {
+            padding: 16px 18px 18px;
+        }
+
+        .product-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .product-seller {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--madhwa-primary);
+            margin-bottom: 4px;
+        }
+
+        .product-price .original {
+            font-size: 14px;
+            font-weight: 400;
+            color: #9a9aaa;
+            text-decoration: line-through;
+            margin-left: 8px;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .product-rating .stars {
+            color: var(--google-yellow);
+            letter-spacing: 1px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-add-cart {
+            flex: 1;
+            background: var(--madhwa-primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-add-cart:hover {
+            background: var(--madhwa-dark);
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-whatsapp:hover {
+            background: #1da851;
+        }
+
+        /* ===== CART FLOATING BUTTON ===== */
+        .cart-float {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--madhwa-primary);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            padding: 14px 24px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(230,126,34,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+            transition: transform 0.2s;
+        }
+
+        .cart-float:hover {
+            transform: scale(1.02);
+        }
+
+        .cart-float .count {
+            background: white;
+            color: var(--madhwa-primary);
+            border-radius: 50%;
+            padding: 2px 10px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* ===== CART MODAL ===== */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .cart-modal.open {
+            display: flex;
+        }
+
+        .cart-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 32px;
+            max-width: 500px;
+            width: 92%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .cart-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .cart-item .item-info {
+            flex: 1;
+        }
+
+        .cart-item .item-title {
+            font-weight: 500;
+        }
+
+        .cart-item .item-price {
+            color: var(--madhwa-primary);
+            font-weight: 600;
+        }
+
+        .cart-item .item-remove {
+            background: none;
+            border: none;
+            color: var(--google-red);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 16px 0;
+            border-top: 2px solid var(--border-soft);
+            margin-top: 8px;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            background: var(--google-green);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-checkout:hover {
+            background: #2d8f47;
+        }
+
+        .btn-close-cart {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c2418;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            bottom: 120px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-content {
+                padding: 20px 16px 40px;
+            }
+            .marketplace-hero {
+                padding: 28px 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            .marketplace-hero .hero-text h1 {
+                font-size: 26px;
+            }
+            .product-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+            .product-image {
+                height: 150px;
+            }
+            .product-title {
+                font-size: 14px;
+            }
+            .product-price {
+                font-size: 17px;
+            }
+            .product-actions {
+                flex-direction: column;
+            }
+            .btn-add-cart, .btn-whatsapp {
+                width: 100%;
+                justify-content: center;
+            }
+            .cart-float {
+                bottom: 16px;
+                right: 16px;
+                padding: 12px 18px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .search-section {
+                flex-direction: column;
+            }
+            .search-bar {
+                width: 100%;
+            }
+            .filter-dropdown {
+                width: 100%;
+            }
+            .category-chips {
+                gap: 8px;
+            }
+            .chip {
+                font-size: 12px;
+                padding: 6px 14px;
+            }
+            .cart-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="headerPlaceholder"></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+        <!-- Hero Banner -->
+        <div class="marketplace-hero">
+        <button class="hero-cta" onclick="window.location.href='ms-seller-dashboard.html'">✨ Sell on Madhwa Samaj Marketplace </button>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search for puja items, books, idols..." oninput="filterProducts()">
+            </div>
+            <select class="filter-dropdown" id="categoryFilter" onchange="filterProducts()">
+                <option value="all">All Categories</option>
+                <option value="puja">Puja Items</option>
+                <option value="books">Books</option>
+                <option value="prasad">Prasad</option>
+                <option value="rudraksha">Rudraksha</option>
+                <option value="idols">Idols</option>
+                <option value="snacks">Snacks</option>
+                <option value="merchandise">Merchandise</option>
+                <option value="wear-men">Traditional Wear - Men</option>
+                <option value="wear-women">Traditional Wear - Women</option>
+                <option value="wear-children">Traditional Wear - Children</option>
+            </select>
+        </div>
+
+        <!-- Category Chips -->
+        <div class="category-chips" id="categoryChips">
+            <span class="chip active" data-cat="all" onclick="filterByChip('all', this)">✨ All</span>
+            <span class="chip" data-cat="puja" onclick="filterByChip('puja', this)">🪔 Puja Items</span>
+            <span class="chip" data-cat="books" onclick="filterByChip('books', this)">📚 Books</span>
+            <span class="chip" data-cat="prasad" onclick="filterByChip('prasad', this)">🍬 Prasad</span>
+            <span class="chip" data-cat="rudraksha" onclick="filterByChip('rudraksha', this)">📿 Rudraksha</span>
+            <span class="chip" data-cat="idols" onclick="filterByChip('idols', this)">🛕 Idols</span>
+            <span class="chip" data-cat="snacks" onclick="filterByChip('snacks', this)">🍪 Snacks</span>
+            <span class="chip" data-cat="merchandise" onclick="filterByChip('merchandise', this)">🎁 Merchandise</span>
+            <span class="chip" data-cat="wear-men" onclick="filterByChip('wear-men', this)">👔 Men</span>
+            <span class="chip" data-cat="wear-women" onclick="filterByChip('wear-women', this)">👗 Women</span>
+            <span class="chip" data-cat="wear-children" onclick="filterByChip('wear-children', this)">👶 Children</span>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="product-grid" id="productGrid">
+            <!-- Products rendered by JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- ===== SHARED FOOTER ===== -->
+    <footer class="site-footer">
+        <div class="footer-mantra">🙏 Hari Sarvottama, Vayu Jeevottama 🙏</div>
+        <div class="footer-copy">© 2026 Madhwa Samaj — Preserving the Dvaita Tradition</div>
+    </footer>
+
+    <!-- ===== CART FLOATING BUTTON ===== -->
+    <button class="cart-float" id="cartFloat" onclick="openCart()">
+        🛒 Cart <span class="count" id="cartCount">0</span>
+    </button>
+
+    <!-- ===== CART MODAL ===== -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <button class="btn-close-cart" onclick="closeCart()">✕</button>
+            <h2>🛒 Your Cart</h2>
+            <div id="cartItems"></div>
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotal">₹0</span>
+            </div>
+            <button class="btn-checkout" onclick="checkout()">Proceed to Checkout</button>
+            <p style="font-size:12px; color:var(--text-secondary); margin-top:12px; text-align:center;">🔒 Secure payments via Razorpay</p>
+        </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast">Item added to cart! 🛒</div>
+
+    <!-- ===== LOAD HEADER & SCRIPTS ===== -->
+    <script>
+        // =============================================
+        // PRODUCT DATA (placeholders)
+        // =============================================
+        const products = [
+            { id: 1, name: "Lord Krishna Idol", category: "idols", price: 450, originalPrice: 500, seller: "Shri Krishna Arts", rating: 4.8, featured: true, discount: 10, emoji: "🛕" },
+            { id: 2, name: "Rudraksha Mala (108 beads)", category: "rudraksha", price: 350, originalPrice: 0, seller: "Divine Rudraksha", rating: 4.5, featured: false, discount: 0, emoji: "📿" },
+            { id: 3, name: "Sandalwood Puja Set", category: "puja", price: 280, originalPrice: 0, seller: "Puja Essentials", rating: 4.2, featured: false, discount: 0, emoji: "🪔" },
+            { id: 4, name: "Bhagavad Gita (Hardcover)", category: "books", price: 320, originalPrice: 400, seller: "Vedanta Books", rating: 4.9, featured: true, discount: 20, emoji: "📚" },
+            { id: 5, name: "Dry Fruits Prasad Box", category: "prasad", price: 250, originalPrice: 0, seller: "Prasad Bhandar", rating: 4.3, featured: false, discount: 0, emoji: "🍬" },
+            { id: 6, name: "Vishnu Sahasranama Book", category: "books", price: 180, originalPrice: 0, seller: "Vedanta Books", rating: 4.6, featured: false, discount: 0, emoji: "📚" },
+            { id: 7, name: "Panchamrit Puja Kit", category: "puja", price: 390, originalPrice: 0, seller: "Puja Essentials", rating: 4.4, featured: false, discount: 0, emoji: "🪔" },
+            { id: 8, name: "Kaju Katli (250g)", category: "snacks", price: 200, originalPrice: 250, seller: "Sweets & Snacks", rating: 4.7, featured: false, discount: 20, emoji: "🍪" },
+            { id: 9, name: "Madhwa Samaj T-Shirt", category: "merchandise", price: 450, originalPrice: 0, seller: "Samaj Merch", rating: 4.0, featured: false, discount: 0, emoji: "🎁" },
+            { id: 10, name: "Dhoti - Men (White)", category: "wear-men", price: 320, originalPrice: 0, seller: "Traditional Wear", rating: 4.1, featured: false, discount: 0, emoji: "👔" },
+            { id: 11, name: "Silk Saree - Women", category: "wear-women", price: 1200, originalPrice: 1500, seller: "Silk Heritage", rating: 4.8, featured: true, discount: 20, emoji: "👗" },
+            { id: 12, name: "Cotton Kurta - Boys", category: "wear-children", price: 280, originalPrice: 0, seller: "Kids Wear", rating: 4.2, featured: false, discount: 0, emoji: "👶" }
+        ];
+
+        // =============================================
+        // CART LOGIC (localStorage)
+        // =============================================
+        let cart = JSON.parse(localStorage.getItem('madhwaCart')) || [];
+
+        function saveCart() {
+            localStorage.setItem('madhwaCart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            saveCart();
+            showToast(`🛒 ${product.name} added to cart!`);
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveCart();
+            renderCart();
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        // =============================================
+        // RENDER CART MODAL
+        // =============================================
+        function renderCart() {
+            const container = document.getElementById('cartItems');
+            if (cart.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-secondary); padding:20px 0;">Your cart is empty. Start shopping! 🛍️</p>`;
+                document.getElementById('cartTotal').textContent = '₹0';
+                return;
+            }
+            let html = '';
+            let total = 0;
+            cart.forEach(item => {
+                const price = item.discount ? item.price * (1 - item.discount/100) : item.price;
+                const itemTotal = price * item.qty;
+                total += itemTotal;
+                html += `
+                    <div class="cart-item">
+                        <div class="item-info">
+                            <div class="item-title">${item.emoji} ${item.name}</div>
+                            <div class="item-price">₹${price.toFixed(0)} x ${item.qty}</div>
+                        </div>
+                        <button class="item-remove" onclick="removeFromCart(${item.id})">✕</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            document.getElementById('cartTotal').textContent = `₹${total.toFixed(0)}`;
+        }
+
+        function openCart() {
+            renderCart();
+            document.getElementById('cartModal').classList.add('open');
+        }
+
+        function closeCart() {
+            document.getElementById('cartModal').classList.remove('open');
+        }
+
+        // =============================================
+        // CHECKOUT (Razorpay Simulation)
+        // =============================================
+        function checkout() {
+            if (cart.length === 0) {
+                showToast('Your cart is empty!');
+                return;
+            }
+            const total = cart.reduce((sum, item) => {
+                const price = item.discount ? item.price * (1 - item.discount/100) : item.price;
+                return sum + price * item.qty;
+            }, 0);
+            
+            // In production, integrate Razorpay here
+            alert(`✅ Order placed! Total: ₹${total.toFixed(0)}. (Razorpay integration coming soon)`);
+            // Clear cart after checkout
+            cart = [];
+            saveCart();
+            closeCart();
+            showToast('🎉 Order placed successfully!');
+        }
+
+        // =============================================
+        // FILTER PRODUCTS
+        // =============================================
+        let activeCategory = 'all';
+
+        function filterProducts() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const filtered = products.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(search) || p.seller.toLowerCase().includes(search);
+                const matchCategory = category === 'all' || p.category === category;
+                return matchSearch && matchCategory;
+            });
+            renderProducts(filtered);
+        }
+
+        function filterByChip(category, el) {
+            activeCategory = category;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('categoryFilter').value = category;
+            filterProducts();
+        }
+
+        // =============================================
+        // RENDER PRODUCTS
+        // =============================================
+        function renderProducts(productList) {
+            const grid = document.getElementById('productGrid');
+            if (productList.length === 0) {
+                grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--text-secondary); padding:60px 0;">No products found. Try a different search! 🔍</p>`;
+                return;
+            }
+            let html = '';
+            productList.forEach(p => {
+                const discountedPrice = p.discount ? p.price * (1 - p.discount/100) : p.price;
+                const stars = '★'.repeat(Math.floor(p.rating)) + '☆'.repeat(5 - Math.floor(p.rating));
+                let badge = '';
+                if (p.featured) badge = `<span class="product-badge featured">🔥 Featured</span>`;
+                if (p.discount > 0 && !p.featured) badge = `<span class="product-badge discount">${p.discount}% OFF</span>`;
+                html += `
+                    <div class="product-card">
+                        <div class="product-image">
+                            ${badge}
+                            <span class="placeholder-text">${p.emoji}</span>
+                        </div>
+                        <div class="product-details">
+                            <div class="product-title">${p.name}</div>
+                            <div class="product-seller">by ${p.seller}</div>
+                            <div class="product-price">
+                                ₹${discountedPrice.toFixed(0)}
+                                ${p.discount > 0 ? `<span class="original">₹${p.price}</span>` : ''}
+                            </div>
+                            <div class="product-rating">
+                                <span class="stars">${stars}</span> ${p.rating}
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn-add-cart" onclick="addToCart(${p.id})">🛒 Add to Cart</button>
+                                <button class="btn-whatsapp" onclick="contactWhatsApp('${p.seller}')">📱 WhatsApp</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        // =============================================
+        // WHATSAPP CONTACT
+        // =============================================
+        function contactWhatsApp(seller) {
+            const msg = `Hi! I'm interested in your product on Madhwa Samaj Marketplace.`;
+            const phone = '919999999999'; // Replace with actual seller number later
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // =============================================
+        // TOAST NOTIFICATION
+        // =============================================
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // =============================================
+        // CART REMINDER (after 24 hours)
+        // =============================================
+        function checkCartReminder() {
+            const lastChecked = localStorage.getItem('madhwaCartLastChecked');
+            const now = Date.now();
+            if (lastChecked && (now - parseInt(lastChecked)) > 86400000) { // 24 hours
+                if (cart.length > 0) {
+                    showToast(`⏰ You have ${cart.length} items in your cart! Don't miss out on offers.`);
+                }
+            }
+            localStorage.setItem('madhwaCartLastChecked', now.toString());
+        }
+
+        // =============================================
+        // INIT
+        // =============================================
+        renderProducts(products);
+        updateCartUI();
+        checkCartReminder();
+
+        // Close cart modal on outside click
+        document.getElementById('cartModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCart();
+        });
+
+        // =============================================
+        // LOAD SHARED HEADER
+        // =============================================
+        fetch('components/header.html')
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('headerPlaceholder').innerHTML = data;
                 const currentPage = window.location.pathname.split('/').pop() || 'ms-marketplace.html';
                 document.querySelectorAll('.nav-links a').forEach(link => {
                     const href = link.getAttribute('href');
@@ -938,4 +1880,5 @@
         }
     </style>
 </body>
+>>>>>>> 28d485dcd45a46610de46f3a1a6097188c233257
 </html>

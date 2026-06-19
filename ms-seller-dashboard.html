@@ -682,6 +682,752 @@
             .then(res => res.text())
             .then(data => {
                 document.getElementById('headerPlaceholder').innerHTML = data;
+                // Re-run hamburger and highlight after header loads
+                if (typeof window.initHamburger === 'function') {
+                    window.initHamburger();
+                }
+                if (typeof window.highlightCurrentPage === 'function') {
+                    window.highlightCurrentPage();
+                }
+            })
+            .catch(err => console.error('Failed to load header:', err));
+    </script>
+
+    <style>
+        /* Toast styles */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c2418;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            bottom: 120px;
+        }
+
+        /* Footer styles */
+        .site-footer {
+            background: #2c2418;
+            color: #b8a994;
+            padding: 32px 24px 24px;
+            text-align: center;
+            font-size: 13px;
+            margin-top: auto;
+        }
+        .site-footer .footer-mantra {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: #e6d5c4;
+            margin-bottom: 8px;
+        }
+        .site-footer .footer-copy {
+            font-size: 12px;
+            color: #8a7a6a;
+        }
+        @media (max-width: 480px) {
+            .site-footer { padding: 24px 16px 20px; }
+            .site-footer .footer-mantra { font-size: 14px; }
+        }
+    </style>
+</body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Madhwa Samaj | Seller Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --madhwa-primary: #e67e22;
+            --madhwa-light: #f39c12;
+            --madhwa-dark: #d35400;
+            --google-blue: #4285f4;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc04;
+            --google-green: #34a853;
+            --bg-warm: #fefaf5;
+            --surface-white: #ffffff;
+            --text-primary: #2c2418;
+            --text-secondary: #7a5a3a;
+            --border-soft: #f0e2d4;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 14px rgba(230,126,34,0.06);
+            --shadow-lg: 0 8px 28px rgba(0,0,0,0.08);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-warm);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content {
+            flex: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px 24px 48px;
+            width: 100%;
+        }
+
+        /* ===== DASHBOARD HEADER ===== */
+        .dashboard-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            gap: 16px;
+        }
+
+        .dashboard-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .dashboard-header h1 span {
+            color: var(--madhwa-primary);
+        }
+
+        .seller-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff3e0;
+            padding: 6px 16px 6px 12px;
+            border-radius: 40px;
+            border: 1px solid var(--madhwa-light);
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--madhwa-primary);
+        }
+
+        .seller-badge .badge-letter {
+            background: var(--madhwa-primary);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px 18px;
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card .stat-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .stat-card .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-card:nth-child(1) { border-top: 3px solid var(--google-blue); }
+        .stat-card:nth-child(2) { border-top: 3px solid var(--google-green); }
+        .stat-card:nth-child(3) { border-top: 3px solid var(--google-yellow); }
+        .stat-card:nth-child(4) { border-top: 3px solid var(--google-red); }
+
+        /* ===== TAB NAV ===== */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            padding: 4px;
+            margin-bottom: 28px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border: none;
+            background: none;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            background: #fff3e0;
+            color: var(--madhwa-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--madhwa-primary);
+            color: white;
+        }
+
+        /* ===== TAB CONTENT ===== */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== ADD PRODUCT FORM ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px 14px;
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--madhwa-primary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-submit {
+            background: var(--madhwa-primary);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            grid-column: 1 / -1;
+            justify-self: start;
+        }
+
+        .btn-submit:hover {
+            background: var(--madhwa-dark);
+        }
+
+        /* ===== PRODUCT LIST ===== */
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border-soft);
+        }
+
+        .product-table th {
+            background: #f8f4ef;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        .product-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-soft);
+            font-size: 13px;
+        }
+
+        .product-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .product-table .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .product-table .actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .product-table .actions .edit { color: var(--google-blue); }
+        .product-table .actions .delete { color: var(--google-red); }
+        .product-table .actions .view { color: var(--google-green); }
+
+        /* ===== ORDERS ===== */
+        .order-item {
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .order-item .order-info {
+            flex: 2;
+            min-width: 160px;
+        }
+
+        .order-item .order-info .order-name {
+            font-weight: 600;
+        }
+
+        .order-item .order-info .order-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .order-status {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .order-status.pending { background: #fff8e1; color: #e65100; }
+        .order-status.shipped { background: #e3f2fd; color: #0d47a1; }
+        .order-status.delivered { background: #e8f5e9; color: #1b5e20; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .page-content {
+                padding: 20px 16px 40px;
+            }
+            .dashboard-header h1 {
+                font-size: 24px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full {
+                grid-column: 1;
+            }
+            .btn-submit {
+                grid-column: 1;
+                width: 100%;
+                text-align: center;
+            }
+            .product-table {
+                display: block;
+                overflow-x: auto;
+            }
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .stat-card .stat-number {
+                font-size: 22px;
+            }
+            .stat-card .stat-label {
+                font-size: 11px;
+            }
+            .tab-btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .seller-badge {
+                font-size: 11px;
+                padding: 4px 12px 4px 8px;
+            }
+            .seller-badge .badge-letter {
+                width: 24px;
+                height: 24px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="headerPlaceholder"></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1>🛍️ <span>Sacred Seller</span> Dashboard</h1>
+                <p style="color:var(--text-secondary); font-size:14px; margin-top:4px;">Manage your products, orders, and sales</p>
+            </div>
+            <div class="seller-badge">
+                <span class="badge-letter">S</span>
+                <span>Seller Account</span>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-number">12</div>
+                <div class="stat-label">Total Products</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🛒</div>
+                <div class="stat-number">8</div>
+                <div class="stat-label">Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-number">₹24,500</div>
+                <div class="stat-label">Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-number">4.6</div>
+                <div class="stat-label">Rating</div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="products" onclick="switchTab('products', this)">📦 Products</button>
+            <button class="tab-btn" data-tab="add" onclick="switchTab('add', this)">➕ Add Product</button>
+            <button class="tab-btn" data-tab="orders" onclick="switchTab('orders', this)">📋 Orders</button>
+            <button class="tab-btn" data-tab="analytics" onclick="switchTab('analytics', this)">📊 Analytics</button>
+            <button class="tab-btn" data-tab="profile" onclick="switchTab('profile', this)">👤 Profile</button>
+        </div>
+
+        <!-- ===== TAB: PRODUCTS ===== -->
+        <div class="tab-content active" id="tab-products">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
+                <h3 style="font-size:18px; font-weight:600;">Your Products</h3>
+                <input type="text" placeholder="Search products..." style="padding:8px 14px; border:1px solid var(--border-soft); border-radius:30px; font-size:13px; outline:none; min-width:180px;">
+            </div>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>🛕 Lord Krishna Idol</td>
+                        <td>Idols</td>
+                        <td>₹450</td>
+                        <td><span style="color:var(--google-green);">Active</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="edit" title="Edit">✏️</button>
+                                <button class="delete" title="Delete">🗑️</button>
+                                <button class="view" title="View">👁️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>📿 Rudraksha Mala</td>
+                        <td>Rudraksha</td>
+                        <td>₹350</td>
+                        <td><span style="color:var(--google-green);">Active</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="edit" title="Edit">✏️</button>
+                                <button class="delete" title="Delete">🗑️</button>
+                                <button class="view" title="View">👁️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>📚 Bhagavad Gita</td>
+                        <td>Books</td>
+                        <td>₹320</td>
+                        <td><span style="color:var(--google-red);">Out of Stock</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="edit" title="Edit">✏️</button>
+                                <button class="delete" title="Delete">🗑️</button>
+                                <button class="view" title="View">👁️</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== TAB: ADD PRODUCT ===== -->
+        <div class="tab-content" id="tab-add">
+            <div style="background:white; border:1px solid var(--border-soft); border-radius:var(--radius); padding:24px;">
+                <h3 style="font-size:18px; font-weight:600; margin-bottom:16px;">✨ Add New Product</h3>
+                <form id="addProductForm" onsubmit="event.preventDefault(); showToast('✅ Product added successfully!');">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Product Name *</label>
+                            <input type="text" placeholder="e.g., Lord Krishna Idol" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <select required>
+                                <option value="">Select Category</option>
+                                <option>Puja Items</option>
+                                <option>Books</option>
+                                <option>Prasad</option>
+                                <option>Rudraksha</option>
+                                <option>Idols</option>
+                                <option>Snacks</option>
+                                <option>Merchandise</option>
+                                <option>Traditional Wear - Men</option>
+                                <option>Traditional Wear - Women</option>
+                                <option>Traditional Wear - Children</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (₹) *</label>
+                            <input type="number" placeholder="e.g., 450" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Discount (%)</label>
+                            <input type="number" placeholder="e.g., 20" value="0">
+                        </div>
+                        <div class="form-group full">
+                            <label>Product Description</label>
+                            <textarea placeholder="Describe your product..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Stock Quantity</label>
+                            <input type="number" placeholder="e.g., 10" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp Number</label>
+                            <input type="text" placeholder="e.g., 919999999999" value="919999999999">
+                        </div>
+                        <div class="form-group full">
+                            <label>Product Image</label>
+                            <input type="file" accept="image/*" style="padding:8px;">
+                            <span style="font-size:12px; color:var(--text-secondary);">Upload a clear image of your product (JPEG, PNG)</span>
+                        </div>
+                        <button type="submit" class="btn-submit">➕ Add Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===== TAB: ORDERS ===== -->
+        <div class="tab-content" id="tab-orders">
+            <h3 style="font-size:18px; font-weight:600; margin-bottom:16px;">📋 Recent Orders</h3>
+            <div class="order-item">
+                <div class="order-info">
+                    <div class="order-name">🛕 Lord Krishna Idol (x2)</div>
+                    <div class="order-meta">Order #1234 · Ram Jio · ₹900</div>
+                </div>
+                <span class="order-status pending">Pending</span>
+                <button style="background:var(--madhwa-primary); color:white; border:none; padding:6px 16px; border-radius:30px; cursor:pointer;">📱 Contact</button>
+            </div>
+            <div class="order-item">
+                <div class="order-info">
+                    <div class="order-name">📿 Rudraksha Mala (x1)</div>
+                    <div class="order-meta">Order #1233 · Sita Devi · ₹350</div>
+                </div>
+                <span class="order-status shipped">Shipped</span>
+                <button style="background:var(--madhwa-primary); color:white; border:none; padding:6px 16px; border-radius:30px; cursor:pointer;">📱 Contact</button>
+            </div>
+            <div class="order-item">
+                <div class="order-info">
+                    <div class="order-name">📚 Bhagavad Gita (x3)</div>
+                    <div class="order-meta">Order #1232 · Krishna Bhatta · ₹960</div>
+                </div>
+                <span class="order-status delivered">Delivered</span>
+                <button style="background:var(--madhwa-primary); color:white; border:none; padding:6px 16px; border-radius:30px; cursor:pointer;">📱 Contact</button>
+            </div>
+        </div>
+
+        <!-- ===== TAB: ANALYTICS ===== -->
+        <div class="tab-content" id="tab-analytics">
+            <h3 style="font-size:18px; font-weight:600; margin-bottom:16px;">📊 Sales Analytics</h3>
+            <div style="background:white; border:1px solid var(--border-soft); border-radius:var(--radius); padding:24px; text-align:center;">
+                <div style="font-size:48px; margin-bottom:12px;">📈</div>
+                <p style="color:var(--text-secondary);">Weekly sales trend (coming soon)</p>
+                <div style="display:flex; gap:12px; justify-content:center; margin-top:16px; flex-wrap:wrap;">
+                    <span style="background:#fff3e0; padding:6px 16px; border-radius:20px; font-size:12px;">Mon: ₹1,200</span>
+                    <span style="background:#fff3e0; padding:6px 16px; border-radius:20px; font-size:12px;">Tue: ₹2,450</span>
+                    <span style="background:#fff3e0; padding:6px 16px; border-radius:20px; font-size:12px;">Wed: ₹3,800</span>
+                    <span style="background:#fff3e0; padding:6px 16px; border-radius:20px; font-size:12px;">Thu: ₹1,900</span>
+                    <span style="background:#fff3e0; padding:6px 16px; border-radius:20px; font-size:12px;">Fri: ₹4,200</span>
+                    <span style="background:#fff3e0; padding:6px 16px; border-radius:20px; font-size:12px;">Sat: ₹2,100</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB: PROFILE ===== -->
+        <div class="tab-content" id="tab-profile">
+            <div style="background:white; border:1px solid var(--border-soft); border-radius:var(--radius); padding:24px;">
+                <h3 style="font-size:18px; font-weight:600; margin-bottom:16px;">👤 Seller Profile</h3>
+                <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
+                    <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg, var(--madhwa-primary), var(--madhwa-light)); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:700; color:white;">RJ</div>
+                    <div>
+                        <div style="font-size:20px; font-weight:700;">Ram Jio</div>
+                        <div style="color:var(--text-secondary);">Seller since 2025 · ⭐ 4.6</div>
+                        <div style="display:flex; gap:12px; margin-top:8px;">
+                            <span style="background:#fff3e0; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; color:var(--madhwa-primary);">🛍️ Seller</span>
+                            <span style="background:#e8f5e9; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#1b5e20;">✅ Verified</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-grid" style="margin-top:12px;">
+                    <div class="form-group"><label>Shop Name</label><input type="text" value="Ram Jio's Sacred Store" style="padding:10px 14px; border:1px solid var(--border-soft); border-radius:10px;"></div>
+                    <div class="form-group"><label>WhatsApp Number</label><input type="text" value="919999999999" style="padding:10px 14px; border:1px solid var(--border-soft); border-radius:10px;"></div>
+                    <div class="form-group full"><label>Shop Description</label><textarea style="padding:10px 14px; border:1px solid var(--border-soft); border-radius:10px; min-height:60px;">Selling authentic puja items, idols, and spiritual books.</textarea></div>
+                    <button class="btn-submit" style="grid-column:1/-1;">💾 Update Profile</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ===== SHARED FOOTER ===== -->
+    <footer class="site-footer">
+        <div class="footer-mantra">🙏 Hari Sarvottama, Vayu Jeevottama 🙏</div>
+        <div class="footer-copy">© 2026 Madhwa Samaj — Preserving the Dvaita Tradition</div>
+    </footer>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast">✅ Product added successfully!</div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // =============================================
+        // TAB SWITCHING
+        // =============================================
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // =============================================
+        // TOAST
+        // =============================================
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // =============================================
+        // LOAD HEADER
+        // =============================================
+        fetch('components/header.html')
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('headerPlaceholder').innerHTML = data;
                 const currentPage = window.location.pathname.split('/').pop() || 'ms-seller-dashboard.html';
                 document.querySelectorAll('.nav-links a').forEach(link => {
                     const href = link.getAttribute('href');
@@ -742,4 +1488,5 @@
         }
     </style>
 </body>
+>>>>>>> 28d485dcd45a46610de46f3a1a6097188c233257
 </html>

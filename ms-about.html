@@ -958,6 +958,1037 @@
     <!-- ===== LOAD HEADER ===== -->
     <script>
         // Load shared header
+            fetch('components/header.html')
+                .then(res => res.text())
+                .then(data => {
+                    document.getElementById('headerPlaceholder').innerHTML = data;
+                    // Re-run hamburger and highlight after header loads
+                    if (typeof window.initHamburger === 'function') {
+                        window.initHamburger();
+                    }
+                    if (typeof window.highlightCurrentPage === 'function') {
+                        window.highlightCurrentPage();
+                    }
+                })
+                .catch(err => console.error('Failed to load header:', err));
+
+        // Sidebar navigation
+        function showSec(id, el) {
+            document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('sec-' + id).classList.add('active');
+            el.classList.add('active');
+            if (window.innerWidth < 900) {
+                document.querySelector('.content-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Toast
+        let tt;
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(tt);
+            tt = setTimeout(() => t.classList.remove('show'), 3000);
+        }
+    </script>
+
+    <style>
+        /* Footer styles (consistent with index.html) */
+        .site-footer {
+            background: #2c2418;
+            color: #b8a994;
+            padding: 32px 24px 24px;
+            text-align: center;
+            font-size: 13px;
+            margin-top: auto;
+        }
+
+        .site-footer .footer-mantra {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: #e6d5c4;
+            margin-bottom: 8px;
+        }
+
+        .site-footer .footer-copy {
+            font-size: 12px;
+            color: #8a7a6a;
+        }
+
+        @media (max-width: 480px) {
+            .site-footer {
+                padding: 24px 16px 20px;
+            }
+            .site-footer .footer-mantra {
+                font-size: 14px;
+            }
+        }
+    </style>
+</body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MadhwaSamaj – Shri Madhwacharya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =============================================
+           ABOUT PAGE STYLES — ALIGNED WITH NEW DESIGN
+           ============================================= */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --madhwa-primary: #e67e22;
+            --madhwa-light: #f39c12;
+            --madhwa-dark: #d35400;
+            --google-blue-light: #e3f2fd;
+            --google-red-light: #ffebee;
+            --google-yellow-light: #fff8e1;
+            --google-green-light: #e8f5e9;
+            --bg-warm: #fefaf5;
+            --surface-white: #ffffff;
+            --text-primary: #2c2418;
+            --text-secondary: #7a5a3a;
+            --border-soft: #f0e2d4;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 14px rgba(230,126,34,0.06);
+            --radius: 14px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-warm);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Page content wrapper */
+        .page-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px 48px;
+            width: 100%;
+        }
+
+        /* ===== SIDEBAR (from original about.html) ===== */
+        .body-wrap {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 26px;
+            align-items: start;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 80px;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 16px 18px 14px;
+            background: linear-gradient(135deg, #fff3e0, #fff8e8);
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .sh-chakra {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .sh-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--madhwa-primary);
+        }
+
+        .sh-sub {
+            font-size: 11px;
+            color: #9a9aaa;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 16px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-soft);
+            transition: all 0.1s;
+        }
+
+        .nav-item:last-child {
+            border-bottom: none;
+        }
+
+        .nav-item:hover {
+            background: #fff3e0;
+            color: var(--madhwa-primary);
+            border-left-color: var(--madhwa-light);
+        }
+
+        .nav-item.active {
+            background: #fff3e0;
+            color: var(--madhwa-primary);
+            border-left-color: var(--madhwa-dark);
+            font-weight: 700;
+        }
+
+        .ni {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ===== CONTENT AREA ===== */
+        .content-area {
+            min-height: 500px;
+        }
+
+        .sec {
+            display: none;
+        }
+
+        .sec.active {
+            display: block;
+            animation: sectionIn 0.28s ease both;
+        }
+
+        @keyframes sectionIn {
+            from {
+                opacity: 0;
+                transform: translateX(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .cc {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-md);
+            padding: 28px 30px;
+            margin-bottom: 18px;
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--madhwa-primary);
+            margin-bottom: 8px;
+        }
+
+        .sec-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(22px, 3vw, 30px);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .sec-title span {
+            color: var(--madhwa-primary);
+        }
+
+        .prose p {
+            font-size: 17px;
+            line-height: 1.85;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .prose p strong {
+            color: var(--madhwa-primary);
+        }
+
+        /* Quote Block */
+        .qblock {
+            border-left: 4px solid var(--madhwa-primary);
+            padding: 14px 20px;
+            background: #fff3e0;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .qblock p {
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .qblock cite {
+            display: block;
+            margin-top: 8px;
+            font-size: 12px;
+            font-style: normal;
+            color: var(--madhwa-primary);
+            font-weight: 700;
+        }
+
+        /* Fact Box */
+        .fact-box {
+            background: #fafaf7;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+            padding: 16px 18px;
+            margin-bottom: 14px;
+        }
+
+        .fact-box h4 {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9a9aaa;
+            margin-bottom: 10px;
+        }
+
+        .frow {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 7px 0;
+            border-bottom: 1px solid var(--border-soft);
+            gap: 10px;
+        }
+
+        .frow:last-child {
+            border-bottom: none;
+        }
+
+        .fl {
+            font-size: 12.5px;
+            color: #9a9aaa;
+            flex-shrink: 0;
+        }
+
+        .fv {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+        }
+
+        /* Two Column */
+        .twocol {
+            display: grid;
+            grid-template-columns: 1fr 290px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* Timeline */
+        .tl {
+            margin: 20px 0 0;
+        }
+
+        .tl-item {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 14px;
+            position: relative;
+        }
+
+        .tl-item::before {
+            content: '';
+            position: absolute;
+            left: 11px;
+            top: 24px;
+            bottom: -14px;
+            width: 2px;
+            background: var(--border-soft);
+        }
+
+        .tl-item:last-child::before {
+            display: none;
+        }
+
+        .tl-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--madhwa-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+            position: relative;
+            z-index: 1;
+            margin-top: 1px;
+        }
+
+        .tl-year {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--madhwa-primary);
+        }
+
+        .tl-event {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-top: 2px;
+        }
+
+        /* Grid Cards */
+        .tgrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .tcard {
+            border-radius: 12px;
+            padding: 18px;
+            transition: transform 0.18s, box-shadow 0.18s;
+        }
+
+        .tcard:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+        }
+
+        .tcard .tn {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 800;
+            opacity: 0.1;
+            line-height: 1;
+        }
+
+        .tcard .ti {
+            font-size: 24px;
+            margin: 4px 0 8px;
+        }
+
+        .tcard h3 {
+            font-size: 13.5px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .tcard p {
+            font-size: 12px;
+            line-height: 1.6;
+            opacity: 0.85;
+        }
+
+        .tc1 {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+        }
+        .tc1 h3 {
+            color: var(--madhwa-dark);
+        }
+        .tc2 {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+        }
+        .tc2 h3 {
+            color: #0a5c04;
+        }
+        .tc3 {
+            background: linear-gradient(135deg, #e8eaf6, #c5cae9);
+        }
+        .tc3 h3 {
+            color: #000080;
+        }
+        .tc4 {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+        }
+        .tc4 h3 {
+            color: #e65100;
+        }
+        .tc5 {
+            background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+        }
+        .tc5 h3 {
+            color: #880e4f;
+        }
+        .tc6 {
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+        }
+        .tc6 h3 {
+            color: #006064;
+        }
+
+        /* Works Items */
+        .witem {
+            display: flex;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--border-soft);
+            align-items: flex-start;
+        }
+
+        .witem:last-child {
+            border-bottom: none;
+        }
+
+        .wnum {
+            width: 26px;
+            height: 26px;
+            border-radius: 7px;
+            background: #fff3e0;
+            color: var(--madhwa-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .wtype {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #0a5c04;
+            margin-bottom: 2px;
+        }
+
+        .wtitle {
+            font-size: 13.5px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .wdesc {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Mathas Grid */
+        .mgrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .mcard {
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.18s, box-shadow 0.18s;
+        }
+
+        .mcard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .mnum {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            background: linear-gradient(135deg, var(--madhwa-primary), var(--madhwa-dark));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 9px;
+        }
+
+        .mname {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .mdeity {
+            font-size: 11.5px;
+            color: var(--madhwa-primary);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .mdesc {
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Categories */
+        .cat-block {
+            margin-bottom: 24px;
+        }
+
+        .cat-head {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            padding-bottom: 8px;
+            border-bottom: 2px solid #fff3e0;
+            margin-bottom: 14px;
+        }
+
+        .cat-head span {
+            color: var(--madhwa-primary);
+        }
+
+        .cat-intro {
+            font-size: 16px;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .mlist-item {
+            display: flex;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-soft);
+            align-items: flex-start;
+        }
+
+        .mlist-item:last-child {
+            border-bottom: none;
+        }
+
+        .mbullet {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff3e0;
+            color: var(--madhwa-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .mlist-name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .mlist-sub {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Location Cards */
+        .loc-card {
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .loc-icon {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .loc-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+
+        .loc-sub {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .loc-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .ltag {
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #e8f5e9;
+            color: #0a5c04;
+        }
+
+        .ltag-s {
+            background: #fff3e0;
+            color: var(--madhwa-primary);
+        }
+
+        .ltag-n {
+            background: #e8eaf6;
+            color: #000080;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 300;
+            background: #3d1a00;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .body-wrap {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: relative;
+                top: 0;
+                display: flex;
+                flex-direction: column;
+            }
+            .twocol {
+                grid-template-columns: 1fr;
+            }
+            .tgrid {
+                grid-template-columns: 1fr;
+            }
+            .mgrid {
+                grid-template-columns: 1fr;
+            }
+            .page-content {
+                padding: 20px 16px 40px;
+            }
+            .cc {
+                padding: 20px 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cc {
+                padding: 16px 14px;
+            }
+            .prose p {
+                font-size: 15px;
+            }
+            .qblock p {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SHARED HEADER (Banner + Sticky Nav) ===== -->
+    <div id="headerPlaceholder"></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+        <div class="body-wrap">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sh-chakra">☸</div>
+                    <div class="sh-title">Shri Madhwacharya</div>
+                    <div class="sh-sub">Select a topic below</div>
+                </div>
+                <div class="nav-item active" onclick="showSec('life',this)"><span class="ni">📖</span> His Life &amp; Story</div>
+                <div class="nav-item" onclick="showSec('philosophy',this)"><span class="ni">🕉️</span> His Philosophy</div>
+                <div class="nav-item" onclick="showSec('books',this)"><span class="ni">📚</span> His Books</div>
+                <div class="nav-item" onclick="showSec('mathas',this)"><span class="ni">🏛️</span> Mathas Established</div>
+                <div class="nav-item" onclick="showSec('mathas-india',this)"><span class="ni">🗺️</span> Mathas Across India</div>
+                <div class="nav-item" onclick="showSec('howtogo',this)"><span class="ni">🧭</span> How to Get There</div>
+                <div class="nav-item" onclick="showSec('external-resources',this)"><span class="ni">🔗</span> External Resources</div>
+            </div>
+
+            <div class="content-area">
+                <!-- 1. HIS LIFE -->
+                <div class="sec active" id="sec-life">
+                    <div class="cc">
+                        <div class="eyebrow">His Life &amp; Story</div>
+                        <div class="sec-title">A Life of <span>Divine Purpose</span></div>
+                        <div class="twocol">
+                            <div class="prose">
+                                <p>Shri Madhwacharya was born in <strong>1238 CE</strong> at Pajaka, a small village near Udupi in coastal Karnataka. Named <em>Vasudeva</em> at birth, he displayed extraordinary signs of spiritual greatness from childhood — memorising the Vedas with ease and showing deep devotion to Lord Vishnu from a very young age.</p>
+                                <div class="qblock">
+                                    <p>"He who knows that Vishnu is the highest, that the Jivas are distinct from Him, and that the world is real — he alone is truly liberated."</p>
+                                    <cite>— Shri Madhwacharya</cite>
+                                </div>
+                                <p>At the age of eleven, he took <strong>Sanyasa</strong> from Shri Achutyapreksha Tirtha. Upon initiation, he was named <em>Poornaprajna</em>, then <em>Anandatirtha</em>, and ultimately became known as <strong>Madhwacharya</strong> — the great teacher.</p>
+                                <p>He undertook two great pilgrimages to <strong>Badrinath</strong> in the Himalayas, where he is said to have met the sage Vedavyasa himself, who gifted him a clay image of Lord Krishna. This idol became the presiding deity of the <strong>Udupi Krishna Temple</strong>, which he established and which stands to this day.</p>
+                                <p>Over his 79-year life, Shri Madhwacharya composed <strong>37 works</strong>, debated and defeated scholars across India, and established eight Mathas. In <strong>1317 CE</strong>, while discoursing on the Aitareya Upanishad at Udupi, he attained Mahasamadhi — flowers showering upon him as he entered the divine realm.</p>
+                            </div>
+                            <div>
+                                <div class="fact-box">
+                                    <h4>Key Facts</h4>
+                                    <div class="frow"><span class="fl">Born</span><span class="fv">1238 CE, Pajaka, Udupi</span></div>
+                                    <div class="frow"><span class="fl">Birth Name</span><span class="fv">Vasudeva</span></div>
+                                    <div class="frow"><span class="fl">Sanyasa Name</span><span class="fv">Anandatirtha</span></div>
+                                    <div class="frow"><span class="fl">Guru</span><span class="fv">Achutyapreksha Tirtha</span></div>
+                                    <div class="frow"><span class="fl">Philosophy</span><span class="fv">Dvaita Vedanta</span></div>
+                                    <div class="frow"><span class="fl">Works Composed</span><span class="fv">37 (Sarvamoolagrantha)</span></div>
+                                    <div class="frow"><span class="fl">Badri pravesh</span><span class="fv">1317 CE, Udupi</span></div>
+                                </div>
+                                <div class="fact-box" style="background:#fff3e0;border-color:#FFD180;">
+                                    <h4>Titles Bestowed</h4>
+                                    <div class="frow"><span class="fl">Jagadguru</span><span class="fv">Universal Teacher</span></div>
+                                    <div class="frow"><span class="fl">Poornaprajna</span><span class="fv">Of complete wisdom</span></div>
+                                    <div class="frow"><span class="fl">Anandatirtha</span><span class="fv">Shore of bliss</span></div>
+                                    <div class="frow"><span class="fl">Vayuputra</span><span class="fv">Son of Vayu</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:24px;">
+                            <div class="eyebrow">Timeline</div>
+                            <div class="tl">
+                                <div class="tl-item"><div class="tl-dot">1</div><div><div class="tl-year">1238 CE</div><div class="tl-event">Born at Pajaka, near Udupi, Karnataka</div></div></div>
+                                <div class="tl-item"><div class="tl-dot">2</div><div><div class="tl-year">1249 CE</div><div class="tl-event">Takes Sanyasa; named Poornaprajna then Anandatirtha</div></div></div>
+                                <div class="tl-item"><div class="tl-dot">3</div><div><div class="tl-year">1255 CE</div><div class="tl-event">First pilgrimage to Badrinath; meets Vedavyasa</div></div></div>
+                                <div class="tl-item"><div class="tl-dot">4</div><div><div class="tl-year">1262 CE</div><div class="tl-event">Installs Shri Krishna idol at Udupi; establishes the Krishna Matha</div></div></div>
+                                <div class="tl-item"><div class="tl-dot">5</div><div><div class="tl-year">1265 CE</div><div class="tl-event">Establishes the eight Mathas; institutes the Paryaya system</div></div></div>
+                                <div class="tl-item"><div class="tl-dot">6</div><div><div class="tl-year">1275 CE</div><div class="tl-event">Second pilgrimage to Badrinath; receives the Brahmasutra commentary</div></div></div>
+                                <div class="tl-item"><div class="tl-dot" style="background:#34a853;">✓</div><div><div class="tl-year">1317 CE</div><div class="tl-event">Attains Mahasamadhi at Udupi while discoursing on the Aitareya Upanishad</div></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. HIS PHILOSOPHY -->
+                <div class="sec" id="sec-philosophy">
+                    <div class="cc">
+                        <div class="eyebrow">His Philosophy</div>
+                        <div class="sec-title">The Teachings of <span>Dvaita Vedanta</span></div>
+                        <div class="prose">
+                            <p>Shri Madhwacharya's philosophical system — <strong>Dvaita Vedanta</strong> (dualism) — stands in direct contrast to Adi Shankaracharya's Advaita (non-dualism). He asserted the <em>eternal, real distinction</em> between God, individual souls, and the universe.</p>
+                        </div>
+                        <div class="tgrid">
+                            <div class="tcard tc1"><div class="tn">01</div><div class="ti">🕉️</div><h3>Vishnu Sarvottama</h3><p>Lord Vishnu alone is the Supreme Being — independent, self-luminous, and the ultimate cause of all creation. All other deities and souls are subordinate to and dependent upon Him.</p></div>
+                            <div class="tcard tc2"><div class="tn">02</div><div class="ti">⚖️</div><h3>True Dualism</h3><p>There is an eternal, real distinction between God (Ishvara), individual souls (Jivas), and the world (Jagat). These three are not illusory — they are genuinely and permanently distinct.</p></div>
+                            <div class="tcard tc3"><div class="tn">03</div><div class="ti">🌍</div><h3>Jagat Satyatva</h3><p>The world is real, not Maya or illusion. This was Madhwacharya's direct counter to Advaita Vedanta's claim that all of creation is a cosmic illusion projected by Brahman.</p></div>
+                            <div class="tcard tc4"><div class="tn">04</div><div class="ti">🙏</div><h3>Bhakti as the Path</h3><p>Sincere devotion (Bhakti) to Vishnu is the supreme means of liberation. Knowledge and action are secondary — genuine love for the Lord is the highest spiritual practice.</p></div>
+                            <div class="tcard tc5"><div class="tn">05</div><div class="ti">📚</div><h3>Pramana — Valid Knowledge</h3><p>Madhwacharya accepted Pratyaksha (perception), Anumana (inference), and Agama (scripture) as valid sources of knowledge, with the Vedas as the supreme and unquestionable authority.</p></div>
+                            <div class="tcard tc6"><div class="tn">06</div><div class="ti">🔱</div><h3>Pañcha-bheda</h3><p>Five eternal differences: God &amp; soul, God &amp; matter, soul &amp; matter, soul &amp; soul, matter &amp; matter. These differences are absolutely real and permanent — never dissolved even in liberation.</p></div>
+                        </div>
+                        <div class="qblock" style="margin-top:24px;">
+                            <p>"Vishnu alone is the Supreme. The Vedas alone are the source of knowledge. The world is real. The difference between the individual soul and the Lord is eternal and real."</p>
+                            <cite>— Shri Madhwacharya, Anubhashya</cite>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. HIS BOOKS -->
+                <div class="sec" id="sec-books">
+                    <div class="cc">
+                        <div class="eyebrow">His Literary Legacy</div>
+                        <div class="sec-title">The <span>Sarvamoolagrantha</span></div>
+                        <div class="prose">
+                            <p>Shri Madhwacharya composed <strong>37 works</strong> collectively known as the <em>Sarvamoolagrantha</em> — "the root of all texts." These span Vedic commentaries, devotional hymns, logical treatises, and independent philosophical works covering every aspect of Vedic knowledge.</p>
+                        </div>
+                        <div style="margin-top:20px;">
+                            <div class="witem"><div class="wnum">1</div><div><div class="wtype">Bhashya · Commentary</div><div class="wtitle">Brahmasutra Bhashya</div><div class="wdesc">His foundational commentary on Badarayana's Brahma Sutras — the cornerstone of the Dvaita philosophical system.</div></div></div>
+                            <div class="witem"><div class="wnum">2</div><div><div class="wtype">Bhashya</div><div class="wtitle">Gita Bhashya</div><div class="wdesc">Commentary on the Bhagavad Gita through the lens of Dvaita Vedanta and supreme devotion to Shri Krishna.</div></div></div>
+                            <div class="witem"><div class="wnum">3</div><div><div class="wtype">Bhashya</div><div class="wtitle">Upanishad Bhashyas (10 works)</div><div class="wdesc">Commentaries on all ten principal Upanishads including Aitareya, Chandogya, Brihadaranyaka, Kena, Katha, Isha, Mundaka, Mandukya, Taittiriya, and Prashna.</div></div></div>
+                            <div class="witem"><div class="wnum">4</div><div><div class="wtype">Stotra · Devotional Hymn</div><div class="wtitle">Dwadasha Stotra</div><div class="wdesc">Twelve beautiful Sanskrit hymns in praise of Lord Vishnu, still sung daily in Madhwa temples and Mathas across the world.</div></div></div>
+                            <div class="witem"><div class="wnum">5</div><div><div class="wtype">Prakarana · Independent Work</div><div class="wtitle">Vishnu Tattva Nirnaya</div><div class="wdesc">A definitive work establishing the supreme status of Vishnu and methodically refuting rival philosophical positions.</div></div></div>
+                            <div class="witem"><div class="wnum">6</div><div><div class="wtype">Prakarana</div><div class="wtitle">Mahabharata Tatparya Nirnaya</div><div class="wdesc">A 32-chapter work determining the inner meaning of the Mahabharata and Ramayana through Dvaita philosophy.</div></div></div>
+                            <div class="witem"><div class="wnum">7</div><div><div class="wtype">Prakarana</div><div class="wtitle">Bhagavata Tatparya Nirnaya</div><div class="wdesc">Exposition of the inner meaning of the Bhagavata Purana, elucidating the supremacy of Lord Vishnu throughout.</div></div></div>
+                            <div class="witem"><div class="wnum">8</div><div><div class="wtype">Prakarana</div><div class="wtitle">Pramana Lakshana</div><div class="wdesc">A logical treatise precisely defining the valid sources of knowledge (pramana) in Madhwa epistemology.</div></div></div>
+                            <div class="witem"><div class="wnum">9</div><div><div class="wtype">Prakarana</div><div class="wtitle">Katha Lakshana</div><div class="wdesc">A treatise on the rules of philosophical debate and the methodology for validating arguments in Vedantic discourse.</div></div></div>
+                            <div class="witem"><div class="wnum">10</div><div><div class="wtype">Prakarana</div><div class="wtitle">Upadhikhandana &amp; Mithyatvanumana Khandana</div><div class="wdesc">Two works specifically refuting the Advaitic concepts of Upadhi (limiting adjuncts) and the supposed illusoriness of the world.</div></div></div>
+                        </div>
+                        <p style="text-align:center;font-size:13px;color:#9a9aaa;margin-top:16px;padding-top:14px;border-top:1px solid var(--border-soft);">+ 27 more works including the Rigbhashya, Karma Nirnaya, Tantrasara Sangraha, and several Tilaka commentaries.</p>
+                    </div>
+                </div>
+
+                <!-- 4. MATHAS ESTABLISHED -->
+                <div class="sec" id="sec-mathas">
+                    <div class="cc">
+                        <div class="eyebrow">Mathas Established</div>
+                        <div class="sec-title">The <span>Ashta Mathas</span> of Udupi</div>
+                        <div class="prose">
+                            <p>Shri Madhwacharya established the <strong>Ashta Mathas</strong> (Eight Monasteries) in Udupi to ensure the eternal and uninterrupted worship of Lord Krishna and to systematically propagate his Dvaita philosophy. After installing the resplendent deity of Lord Bala Krishna in Udupi, he was concerned about the longevity of the temple's administration and the preservation of Vedic knowledge after his departure.</p>
+                        </div>
+                        <div class="fact-box" style="margin:18px 0;">
+                            <h4>Primary Reasons for Establishment</h4>
+                            <div class="frow"><span class="fl">Continuous Worship</span><span class="fv">Entrusted 8 disciples to perform 13 daily rituals</span></div>
+                            <div class="frow"><span class="fl">Propagate Dvaita</span><span class="fv">Centers of Vedas, Vedanta &amp; Tatvavada (philosophy of reality)</span></div>
+                            <div class="frow"><span class="fl">Paryaya System</span><span class="fv">Formal rotation — originally 2 months, now 2 years per Matha</span></div>
+                            <div class="frow"><span class="fl">Dvandva Mathas</span><span class="fv">Initiated in pairs so each has a backup — no break in sacred service</span></div>
+                        </div>
+                        <div class="qblock" style="margin-bottom:22px;">
+                            <p>He entrusted eight of his direct Sanyasi disciples with the responsibility of performing the 13 daily rituals and managing the Udupi Shri Krishna Temple. By initiating the Swamijis in pairs (called <em>Dvandva Mathas</em>), he ensured that if one head faced difficulties, the paired Swamiji could step in — preventing any break in sacred activities.</p>
+                        </div>
+                        <div class="eyebrow" style="margin-bottom:14px;">The Eight Mathas — Named After Their Villages of Origin</div>
+                        <div class="mgrid">
+                            <div class="mcard"><div class="mnum">1</div><div class="mname">Palimaru Matha</div><div class="mdeity">Worships Shri Rama</div><div class="mdesc">The foremost of the eight Mathas, established first by Shri Madhwacharya. Named after the village of Palimaru near Udupi.</div></div>
+                            <div class="mcard"><div class="mnum">2</div><div class="mname">Adamaru Matha</div><div class="mdeity">Worships Chaturbhuja Kaliyamardana Krishna</div><div class="mdesc">Named after Adamaru village. Known for deep Vedic scholarship and traditional learning across generations.</div></div>
+                            <div class="mcard"><div class="mnum">3</div><div class="mname">Krishnapura Matha</div><div class="mdeity">Worships Kaliyamardana Krishna</div><div class="mdesc">One of the eight Udupi Mathas with a long history of service to the Shri Krishna temple tradition.</div></div>
+                            <div class="mcard"><div class="mnum">4</div><div class="mname">Puttige Matha</div><div class="mdeity">Worships Panduranga Vitthala</div><div class="mdesc">Named after the village Puttige. Renowned for adherence to traditional Dvaita philosophy and Vedic practice.</div></div>
+                            <div class="mcard"><div class="mnum">5</div><div class="mname">Shiroor Matha</div><div class="mdeity">Worships Vitthala</div><div class="mdesc">Maintains deep traditions of Vedic learning and ritual practice exactly as established by Shri Madhwacharya.</div></div>
+                            <div class="mcard"><div class="mnum">6</div><div class="mname">Sodhe Matha</div><div class="mdeity">Worships Bhuvaraha</div><div class="mdesc">Located in Sirsi (historically Sodhe). Plays a key role in spreading Dvaita Vedanta across North Karnataka.</div></div>
+                            <div class="mcard"><div class="mnum">7</div><div class="mname">Kaniyooru Matha</div><div class="mdeity">Worships Narasimha</div><div class="mdesc">Named after Kaniyooru village. Holds the sacred right to the Paryaya rotation at the Udupi Krishna temple.</div></div>
+                            <div class="mcard"><div class="mnum">8</div><div class="mname">Pejavara Matha</div><div class="mdeity">Worships Vitthala</div><div class="mdesc">One of the most internationally prominent Madhwa Mathas — widely known for its Vedantic scholarship and outreach.</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. MATHAS ACROSS INDIA -->
+                <div class="sec" id="sec-mathas-india">
+                    <div class="cc">
+                        <div class="eyebrow">Mathas Across India</div>
+                        <div class="sec-title">Beyond Udupi — <span>The Wider Matha Network</span></div>
+                        <div class="prose">
+                            <p>While only the eight Ashta Mathas participate in the Paryaya rotation at Udupi, there are today approximately <strong>24–25 Madhwa Mathas</strong> spread across India. These are divided into two main categories.</p>
+                        </div>
+                        <div class="cat-block" style="margin-top:22px;">
+                            <div class="cat-head">Category 1 — <span>The Ashta Mathas (The Udupi Eight)</span></div>
+                            <div class="cat-intro">These eight institutions have the exclusive right and duty to perform the Paryaya (rotational administration) at the Udupi Shri Krishna Temple.</div>
+                            <div class="mgrid">
+                                <div class="mcard"><div class="mname">Palimaru Matha</div><div class="mdesc">Udupi · Paryaya participant</div></div>
+                                <div class="mcard"><div class="mname">Adamaru Matha</div><div class="mdesc">Udupi · Paryaya participant</div></div>
+                                <div class="mcard"><div class="mname">Krishnapura Matha</div><div class="mdesc">Udupi · Paryaya participant</div></div>
+                                <div class="mcard"><div class="mname">Puttige Matha</div><div class="mdesc">Udupi · Paryaya participant</div></div>
+                                <div class="mcard"><div class="mname">Shiroor Matha</div><div class="mdesc">Udupi · Paryaya participant</div></div>
+                                <div class="mcard"><div class="mname">Sodhe Matha</div><div class="mdesc">Sirsi · Paryaya participant</div></div>
+                                <div class="mcard"><div class="mname">Kaniyooru Matha</div><div class="mdesc">Udupi · Paryaya participant</div></div>
+                                <div class="mcard"><div class="mname">Pejavara Matha</div><div class="mdesc">Udupi · Paryaya participant</div></div>
+                            </div>
+                        </div>
+                        <div class="cat-block">
+                            <div class="cat-head">Category 2 — <span>The Deshastha (Outside) Mathas</span></div>
+                            <div class="cat-intro">Shri Madhwacharya also appointed direct disciples to propagate his philosophy across India beyond the coastal Tulu region. Over centuries, these branched into several independent and influential institutions.</div>
+                            <div style="background:#fff3e0;border-radius:10px;padding:14px 16px;margin-bottom:14px;border:1px solid #FFD180;">
+                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--madhwa-primary);margin-bottom:10px;">The "Big Three" — Major Mathas</div>
+                                <div class="mlist-item"><div class="mbullet">1</div><div><div class="mlist-name">Uttaradi Matha</div><div class="mlist-sub">Considered the largest in terms of followers. Headquartered in Bengaluru.</div></div></div>
+                                <div class="mlist-item"><div class="mbullet">2</div><div><div class="mlist-name">Vyasaraja Matha</div><div class="mlist-sub">Split into the Sosale and Kundapura branches. Named after the great saint Vyasatirtha.</div></div></div>
+                                <div class="mlist-item"><div class="mbullet">3</div><div><div class="mlist-name">Raghavendra Matha</div><div class="mlist-sub">Famous for its headquarters at Mantralaya on the banks of the Tungabhadra river.</div></div></div>
+                            </div>
+                            <div style="background:#e8f5e9;border-radius:10px;padding:14px 16px;margin-bottom:14px;border:1px solid #A5D6A7;">
+                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#0a5c04;margin-bottom:10px;">Tulu Lineage (Non-Paryaya)</div>
+                                <div class="mlist-item"><div class="mbullet" style="background:#e8f5e9;color:#0a5c04;">1</div><div><div class="mlist-name">Bhandarkeri Matha</div><div class="mlist-sub">Closely associated with the Udupi family but does not participate in the Paryaya rotation.</div></div></div>
+                                <div class="mlist-item"><div class="mbullet" style="background:#e8f5e9;color:#0a5c04;">2</div><div><div class="mlist-name">Bhimanakatte Matha</div><div class="mlist-sub">Part of the broader Madhwa tradition in the Tulu Nadu region of coastal Karnataka.</div></div></div>
+                            </div>
+                            <div style="background:#e8eaf6;border-radius:10px;padding:14px 16px;border:1px solid #9FA8DA;">
+                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#000080;margin-bottom:10px;">Others</div>
+                                <div class="mlist-item"><div class="mbullet" style="background:#e8eaf6;color:#000080;">1</div><div><div class="mlist-name">Sripadaraja Matha</div><div class="mlist-sub">An important institution in the Madhwa tradition, associated with the saint Sripadaraja Swamiji.</div></div></div>
+                                <div class="mlist-item"><div class="mbullet" style="background:#e8eaf6;color:#000080;">2</div><div><div class="mlist-name">Subramanya Matha</div><div class="mlist-sub">Part of the wider Madhwa monastic tradition in Karnataka.</div></div></div>
+                                <div class="mlist-item"><div class="mbullet" style="background:#e8eaf6;color:#000080;">3</div><div><div class="mlist-name">Kanva Matha</div><div class="mlist-sub">One of the broader institutions within the Madhwa philosophical tradition.</div></div></div>
+                                <div class="mlist-item"><div class="mbullet" style="background:#e8eaf6;color:#000080;">4</div><div><div class="mlist-name">GSB Mathas — Kashi &amp; Gokarna Partagali</div><div class="mlist-sub">Two Gowda Saraswat Brahmin Mathas connected to the broader Madhwa Vaishnava tradition.</div></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. HOW TO GET THERE -->
+                <div class="sec" id="sec-howtogo">
+                    <div class="cc">
+                        <div class="eyebrow">How to Get There</div>
+                        <div class="sec-title">Visiting <span>Sacred Madhwa Sites</span></div>
+                        <div class="prose">
+                            <p>The most important Madhwa pilgrimage sites are centred around <strong>Udupi</strong> in coastal Karnataka. Here is a practical guide to reaching the key locations.</p>
+                        </div>
+                        <div class="loc-card" style="margin-top:20px;">
+                            <div class="loc-icon">🏛️</div>
+                            <div><div class="loc-name">Udupi Shri Krishna Temple &amp; Ashta Mathas</div><div class="loc-sub">The holiest Madhwa site — home to the Shri Krishna idol installed by Madhwacharya himself, and all eight Mathas within walking distance of each other.</div><div class="loc-tags"><span class="ltag-s">✈️ Mangaluru Airport — 60 km</span> <span class="ltag">🚆 Udupi Railway Station — 3 km</span></div></div>
+                        </div>
+                        <div class="loc-card"><div class="loc-icon">🌿</div><div><div class="loc-name">Pajaka — Birthplace of Shri Madhwacharya</div><div class="loc-sub">A small, serene village about 11 km from Udupi.</div><div class="loc-tags"><span class="ltag-s">🚗 11 km from Udupi</span></div></div></div>
+                        <div class="loc-card"><div class="loc-icon">⛰️</div><div><div class="loc-name">Mantralaya — Shri Raghavendra Swami Brindavana</div><div class="loc-sub">Located on the banks of the Tungabhadra river in Andhra Pradesh.</div><div class="loc-tags"><span class="ltag-s">✈️ Nearest airport: Ballari (70 km)</span></div></div></div>
+                        <div class="qblock" style="margin-top:20px;"><p>For pilgrimage planning, community members can reach out through the MadhwaSamaj directory.</p></div>
+                    </div>
+                </div>
+
+                <!-- 7. EXTERNAL RESOURCES -->
+                <div class="sec" id="sec-external-resources">
+                    <div class="cc">
+                        <div class="eyebrow">External Resources</div>
+                        <div class="sec-title">Explore <span>More Madhwa Knowledge</span></div>
+                        <div class="prose">
+                            <p>We have curated a list of trusted external websites and resources that provide deep insights into Shri Madhwacharya's philosophy, works, and the Madhwa tradition.</p>
+                        </div>
+                        <div style="margin-top:20px;">
+                            <div class="witem"><div class="wnum">1</div><div><div class="wtype">Site · Tatvavada</div><div class="wtitle"><a href="https://www.tatvavada.org" target="_blank" style="color:var(--madhwa-primary);">tatvavada.org</a></div><div class="wdesc">Comprehensive resource on Dvaita Vedanta, with articles, commentaries, and e-books. <em>(Acknowledgement)</em></div></div></div>
+                            <div class="witem"><div class="wnum">2</div><div><div class="wtype">Site · Dvaita.org</div><div class="wtitle"><a href="https://www.dvaita.org" target="_blank" style="color:var(--madhwa-primary);">dvaita.org</a></div><div class="wdesc">Scholarly archive of Dvaita literature.</div></div></div>
+                            <div class="witem"><div class="wnum">3</div><div><div class="wtype">Site · Sumadhwa Seva</div><div class="wtitle"><a href="https://sumadhwaseva.com" target="_blank" style="color:var(--madhwa-primary);">sumadhwaseva.com</a></div><div class="wdesc">E-books, articles, and Madhwa practices.</div></div></div>
+                            <div class="witem"><div class="wnum">4</div><div><div class="wtype">Site · Madhwa TV- YOUTUBE</div><div class="wtitle"><a href="https://www.youtube.com/@madhwatv" target="_blank" style="color:var(--madhwa-primary);">Madhwa TV Channel</a></div><div class="wdesc">Divine Stotras & Chants: Soul-stirring recitations to enhance your daily spiritual practice.</div></div></div>
+                        </div>
+                        <div class="qblock" style="margin-top:24px;">
+                            <p>If you know of other valuable Madhwa resources, please let us know via the feedback form or invite the site owner to join our community.</p>
+                            <cite>— MadhwaSamaj Team</cite>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== SHARED FOOTER ===== -->
+    <footer class="site-footer">
+        <div class="footer-mantra">🙏 Hari Sarvottama, Vayu Jeevottama 🙏</div>
+        <div class="footer-copy">© 2026 Madhwa Samaj — Preserving the Dvaita Tradition</div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ===== LOAD HEADER ===== -->
+    <script>
+        // Load shared header
         fetch('components/header.html')
             .then(res => res.text())
             .then(data => {
@@ -1031,4 +2062,5 @@
         }
     </style>
 </body>
+>>>>>>> 28d485dcd45a46610de46f3a1a6097188c233257
 </html>

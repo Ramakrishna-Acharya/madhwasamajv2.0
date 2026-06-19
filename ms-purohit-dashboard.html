@@ -689,6 +689,759 @@
             .then(res => res.text())
             .then(data => {
                 document.getElementById('headerPlaceholder').innerHTML = data;
+                // Re-run hamburger and highlight after header loads
+                if (typeof window.initHamburger === 'function') {
+                    window.initHamburger();
+                }
+                if (typeof window.highlightCurrentPage === 'function') {
+                    window.highlightCurrentPage();
+                }
+            })
+            .catch(err => console.error('Failed to load header:', err));
+    </script>
+
+    <style>
+        /* Toast styles */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c2418;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            bottom: 120px;
+        }
+
+        /* Footer styles */
+        .site-footer {
+            background: #2c2418;
+            color: #b8a994;
+            padding: 32px 24px 24px;
+            text-align: center;
+            font-size: 13px;
+            margin-top: auto;
+        }
+        .site-footer .footer-mantra {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: #e6d5c4;
+            margin-bottom: 8px;
+        }
+        .site-footer .footer-copy {
+            font-size: 12px;
+            color: #8a7a6a;
+        }
+        @media (max-width: 480px) {
+            .site-footer { padding: 24px 16px 20px; }
+            .site-footer .footer-mantra { font-size: 14px; }
+        }
+    </style>
+</body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Madhwa Samaj | Purohit Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --madhwa-primary: #e67e22;
+            --madhwa-light: #f39c12;
+            --madhwa-dark: #d35400;
+            --google-blue: #4285f4;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc04;
+            --google-green: #34a853;
+            --bg-warm: #fefaf5;
+            --surface-white: #ffffff;
+            --text-primary: #2c2418;
+            --text-secondary: #7a5a3a;
+            --border-soft: #f0e2d4;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 14px rgba(230,126,34,0.06);
+            --shadow-lg: 0 8px 28px rgba(0,0,0,0.08);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-warm);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content {
+            flex: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px 24px 48px;
+            width: 100%;
+        }
+
+        /* ===== DASHBOARD HEADER ===== */
+        .dashboard-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            gap: 16px;
+        }
+
+        .dashboard-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .dashboard-header h1 span {
+            color: var(--madhwa-primary);
+        }
+
+        .purohit-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff3e0;
+            padding: 6px 16px 6px 12px;
+            border-radius: 40px;
+            border: 1px solid var(--madhwa-light);
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--madhwa-primary);
+        }
+
+        .purohit-badge .badge-letter {
+            background: var(--madhwa-primary);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* ===== AVAILABILITY TOGGLE ===== */
+        .availability-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 6px 16px 6px 20px;
+            border-radius: 40px;
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .availability-toggle .label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch.active {
+            background: var(--google-green);
+        }
+
+        .toggle-switch .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(20px);
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px 18px;
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card .stat-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .stat-card .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-card:nth-child(1) { border-top: 3px solid var(--google-blue); }
+        .stat-card:nth-child(2) { border-top: 3px solid var(--google-green); }
+        .stat-card:nth-child(3) { border-top: 3px solid var(--google-yellow); }
+        .stat-card:nth-child(4) { border-top: 3px solid var(--google-red); }
+
+        /* ===== TAB NAV ===== */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            padding: 4px;
+            margin-bottom: 28px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border: none;
+            background: none;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            background: #fff3e0;
+            color: var(--madhwa-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--madhwa-primary);
+            color: white;
+        }
+
+        /* ===== TAB CONTENT ===== */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== BOOKING ITEMS ===== */
+        .booking-item {
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .booking-item .booking-info {
+            flex: 2;
+            min-width: 200px;
+        }
+
+        .booking-item .booking-info .booking-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .booking-item .booking-info .booking-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .booking-status {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .booking-status.pending { background: #fff8e1; color: #e65100; }
+        .booking-status.confirmed { background: #e3f2fd; color: #0d47a1; }
+        .booking-status.completed { background: #e8f5e9; color: #1b5e20; }
+        .booking-status.cancelled { background: #ffebee; color: #c62828; }
+
+        .booking-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .booking-actions button {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .booking-actions button:hover {
+            transform: scale(1.02);
+        }
+
+        .btn-accept { background: var(--google-green); color: white; }
+        .btn-reject { background: var(--google-red); color: white; }
+        .btn-reschedule { background: var(--google-yellow); color: #2c2418; }
+        .btn-contact { background: #25d366; color: white; }
+
+        /* ===== SERVICES GRID ===== */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .service-card {
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .service-card .service-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .service-card .service-fee {
+            font-size: 14px;
+            color: var(--madhwa-primary);
+            font-weight: 600;
+        }
+
+        .service-card .service-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* ===== FORM ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px 14px;
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--madhwa-primary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-submit {
+            background: var(--madhwa-primary);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            grid-column: 1 / -1;
+            justify-self: start;
+        }
+
+        .btn-submit:hover {
+            background: var(--madhwa-dark);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .page-content {
+                padding: 20px 16px 40px;
+            }
+            .dashboard-header h1 {
+                font-size: 24px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full {
+                grid-column: 1;
+            }
+            .btn-submit {
+                grid-column: 1;
+                width: 100%;
+                text-align: center;
+            }
+            .booking-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .availability-toggle {
+                padding: 4px 12px 4px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .stat-card .stat-number {
+                font-size: 22px;
+            }
+            .stat-card .stat-label {
+                font-size: 11px;
+            }
+            .tab-btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .purohit-badge {
+                font-size: 11px;
+                padding: 4px 12px 4px 8px;
+            }
+            .purohit-badge .badge-letter {
+                width: 24px;
+                height: 24px;
+                font-size: 11px;
+            }
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="headerPlaceholder"></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1>🙏 <span>Sacred Seva</span> Dashboard</h1>
+                <p style="color:var(--text-secondary); font-size:14px; margin-top:4px;">Manage your bookings, services, and availability</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <div class="availability-toggle">
+                    <span class="label">🟢 Available</span>
+                    <div class="toggle-switch active" id="availabilityToggle" onclick="toggleAvailability()">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="purohit-badge">
+                    <span class="badge-letter">P</span>
+                    <span>Purohit Account</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-number">14</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-number">3</div>
+                <div class="stat-label">Upcoming</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-number">4.8</div>
+                <div class="stat-label">Rating</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-number">₹18,400</div>
+                <div class="stat-label">Revenue</div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="bookings" onclick="switchTab('bookings', this)">📋 Bookings</button>
+            <button class="tab-btn" data-tab="services" onclick="switchTab('services', this)">🪔 Services</button>
+            <button class="tab-btn" data-tab="profile" onclick="switchTab('profile', this)">👤 Profile</button>
+        </div>
+
+        <!-- ===== TAB: BOOKINGS ===== -->
+        <div class="tab-content active" id="tab-bookings">
+            <h3 style="font-size:18px; font-weight:600; margin-bottom:16px;">📋 Recent Bookings</h3>
+            
+            <div class="booking-item">
+                <div class="booking-info">
+                    <div class="booking-name">🙏 Satyanarayana Puja — Ram Jio</div>
+                    <div class="booking-meta">📅 20 June 2026 · 10:00 AM · ₹1,200</div>
+                </div>
+                <span class="booking-status pending">Pending</span>
+                <div class="booking-actions">
+                    <button class="btn-accept">Accept</button>
+                    <button class="btn-reject">Reject</button>
+                    <button class="btn-reschedule">Reschedule</button>
+                    <button class="btn-contact">📱 WhatsApp</button>
+                </div>
+            </div>
+
+            <div class="booking-item">
+                <div class="booking-info">
+                    <div class="booking-name">🕉️ Vishnu Sahasranama — Sita Devi</div>
+                    <div class="booking-meta">📅 18 June 2026 · 6:00 PM · ₹800</div>
+                </div>
+                <span class="booking-status confirmed">Confirmed</span>
+                <div class="booking-actions">
+                    <button class="btn-reschedule">Reschedule</button>
+                    <button class="btn-contact">📱 WhatsApp</button>
+                </div>
+            </div>
+
+            <div class="booking-item">
+                <div class="booking-info">
+                    <div class="booking-name">🌿 Rudra Abhishekam — Krishna Bhatta</div>
+                    <div class="booking-meta">📅 15 June 2026 · 8:00 AM · ₹2,500</div>
+                </div>
+                <span class="booking-status completed">Completed</span>
+                <div class="booking-actions">
+                    <button class="btn-contact">📱 WhatsApp</button>
+                </div>
+            </div>
+
+            <div class="booking-item">
+                <div class="booking-info">
+                    <div class="booking-name">🪔 Ganesha Puja — Priya Sharma</div>
+                    <div class="booking-meta">📅 12 June 2026 · 11:00 AM · ₹900</div>
+                </div>
+                <span class="booking-status cancelled">Cancelled</span>
+                <div class="booking-actions">
+                    <button class="btn-contact">📱 WhatsApp</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB: SERVICES ===== -->
+        <div class="tab-content" id="tab-services">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                <h3 style="font-size:18px; font-weight:600;">🪔 Services Offered</h3>
+                <button style="background:var(--madhwa-primary); color:white; border:none; padding:8px 20px; border-radius:30px; font-weight:600; cursor:pointer;">➕ Add Service</button>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-name">Satyanarayana Puja</div>
+                    <div class="service-fee">₹1,200</div>
+                    <div class="service-desc">Complete puja with katha, prasad, and aarti</div>
+                </div>
+                <div class="service-card">
+                    <div class="service-name">Vishnu Sahasranama</div>
+                    <div class="service-fee">₹800</div>
+                    <div class="service-desc">Chanting of 1000 names of Lord Vishnu</div>
+                </div>
+                <div class="service-card">
+                    <div class="service-name">Rudra Abhishekam</div>
+                    <div class="service-fee">₹2,500</div>
+                    <div class="service-desc">Sacred abhishekam with 11 Rudrams</div>
+                </div>
+                <div class="service-card">
+                    <div class="service-name">Ganesha Puja</div>
+                    <div class="service-fee">₹900</div>
+                    <div class="service-desc">Modak offering, mantra chanting, and aarti</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB: PROFILE ===== -->
+        <div class="tab-content" id="tab-profile">
+            <div style="background:white; border:1px solid var(--border-soft); border-radius:var(--radius); padding:24px;">
+                <h3 style="font-size:18px; font-weight:600; margin-bottom:16px;">👤 Purohit Profile</h3>
+                <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
+                    <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg, var(--madhwa-primary), var(--madhwa-light)); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:700; color:white;">RK</div>
+                    <div>
+                        <div style="font-size:20px; font-weight:700;">Rama Krishna</div>
+                        <div style="color:var(--text-secondary);">Purohit since 2020 · ⭐ 4.8</div>
+                        <div style="display:flex; gap:12px; margin-top:8px; flex-wrap:wrap;">
+                            <span style="background:#fff3e0; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; color:var(--madhwa-primary);">🙏 Purohit</span>
+                            <span style="background:#e8f5e9; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#1b5e20;">✅ Verified</span>
+                            <span style="background:#e3f2fd; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#0d47a1;">📅 10+ years</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-grid" style="margin-top:12px;">
+                    <div class="form-group"><label>Full Name</label><input type="text" value="Rama Krishna" style="padding:10px 14px; border:1px solid var(--border-soft); border-radius:10px;"></div>
+                    <div class="form-group"><label>Phone Number</label><input type="text" value="919999999999" style="padding:10px 14px; border:1px solid var(--border-soft); border-radius:10px;"></div>
+                    <div class="form-group"><label>Experience (Years)</label><input type="number" value="10" style="padding:10px 14px; border:1px solid var(--border-soft); border-radius:10px;"></div>
+                    <div class="form-group"><label>Languages</label><input type="text" value="Kannada, Hindi, English, Sanskrit" style="padding:10px 14px; border:1px solid var(--border-soft); border-radius:10px;"></div>
+                    <div class="form-group"><label>Expertise</label><input type="text" value="Satyanarayana Puja, Vishnu Sahasranama, Rudra Abhishekam" style="padding:10px 14px; border:1px solid var(--border-soft); border-radius:10px;"></div>
+                    <div class="form-group"><label>Location</label><input type="text" value="Udupi, Karnataka" style="padding:10px 14px; border:1px solid var(--border-soft); border-radius:10px;"></div>
+                    <div class="form-group full"><label>About</label><textarea style="padding:10px 14px; border:1px solid var(--border-soft); border-radius:10px; min-height:60px;">Experienced purohit specializing in Vedic rituals, homams, and temple ceremonies.</textarea></div>
+                    <button class="btn-submit" style="grid-column:1/-1;">💾 Update Profile</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ===== SHARED FOOTER ===== -->
+    <footer class="site-footer">
+        <div class="footer-mantra">🙏 Hari Sarvottama, Vayu Jeevottama 🙏</div>
+        <div class="footer-copy">© 2026 Madhwa Samaj — Preserving the Dvaita Tradition</div>
+    </footer>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast">✅ Booking updated!</div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // =============================================
+        // TAB SWITCHING
+        // =============================================
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // =============================================
+        // AVAILABILITY TOGGLE
+        // =============================================
+        let isAvailable = true;
+
+        function toggleAvailability() {
+            const toggle = document.getElementById('availabilityToggle');
+            const label = toggle.parentElement.querySelector('.label');
+            isAvailable = !isAvailable;
+            toggle.classList.toggle('active');
+            label.textContent = isAvailable ? '🟢 Available' : '🔴 Unavailable';
+            showToast(isAvailable ? '🟢 You are now available for bookings' : '🔴 You are now unavailable');
+        }
+
+        // =============================================
+        // TOAST
+        // =============================================
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // =============================================
+        // LOAD HEADER
+        // =============================================
+        fetch('components/header.html')
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('headerPlaceholder').innerHTML = data;
                 const currentPage = window.location.pathname.split('/').pop() || 'ms-purohit-dashboard.html';
                 document.querySelectorAll('.nav-links a').forEach(link => {
                     const href = link.getAttribute('href');
@@ -749,4 +1502,5 @@
         }
     </style>
 </body>
+>>>>>>> 28d485dcd45a46610de46f3a1a6097188c233257
 </html>

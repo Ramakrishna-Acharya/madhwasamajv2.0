@@ -1,5 +1,9 @@
 /* ========================================
+<<<<<<< HEAD
    MADHWA SAMAJ DESIGN SYSTEM
+=======
+   MADHWA SAMAJ DESIGN SYSTEM 
+>>>>>>> 28d485dcd45a46610de46f3a1a6097188c233257
    Colors, Typography, Spacing, Components
    ======================================== */
 
@@ -387,4 +391,8 @@ h3 {
     .charts-section {
         grid-template-columns: 1fr;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 28d485dcd45a46610de46f3a1a6097188c233257

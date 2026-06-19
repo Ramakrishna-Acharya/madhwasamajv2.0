@@ -337,6 +337,406 @@
         }
 
         fetch('components/header.html')
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('headerPlaceholder').innerHTML = data;
+            // Re-run hamburger and highlight after header loads
+            if (typeof window.initHamburger === 'function') {
+                window.initHamburger();
+            }
+            if (typeof window.highlightCurrentPage === 'function') {
+                window.highlightCurrentPage();
+            }
+        })
+        .catch(err => console.error('Failed to load header:', err));
+
+        renderPurohits(purohits);
+    </script>
+
+    <style>
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c2418;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+        .toast.show { opacity: 1; bottom: 120px; }
+        .site-footer {
+            background: #2c2418;
+            color: #b8a994;
+            padding: 32px 24px 24px;
+            text-align: center;
+            font-size: 13px;
+            margin-top: auto;
+        }
+        .site-footer .footer-mantra {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: #e6d5c4;
+            margin-bottom: 8px;
+        }
+        .site-footer .footer-copy {
+            font-size: 12px;
+            color: #8a7a6a;
+        }
+        @media (max-width: 480px) {
+            .site-footer { padding: 24px 16px 20px; }
+            .site-footer .footer-mantra { font-size: 14px; }
+        }
+    </style>
+</body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Madhwa Samaj | Find a Purohit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --madhwa-primary: #e67e22;
+            --madhwa-light: #f39c12;
+            --madhwa-dark: #d35400;
+            --google-blue: #4285f4;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc04;
+            --google-green: #34a853;
+            --bg-warm: #fefaf5;
+            --surface-white: #ffffff;
+            --text-primary: #2c2418;
+            --text-secondary: #7a5a3a;
+            --border-soft: #f0e2d4;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 14px rgba(230,126,34,0.06);
+            --shadow-lg: 0 8px 28px rgba(0,0,0,0.08);
+            --radius: 16px;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-warm);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .page-content {
+            flex: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px 24px 48px;
+            width: 100%;
+        }
+        .purohit-hero {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #fff8e1 100%);
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            margin-bottom: 32px;
+            text-align: center;
+            border: 1px solid rgba(230,126,34,0.12);
+        }
+        .purohit-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .purohit-hero h1 span { color: var(--madhwa-primary); }
+        .purohit-hero p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 8px auto 0;
+        }
+        .search-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .search-bar {
+            flex: 2;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 40px;
+            padding: 0 18px;
+            box-shadow: var(--shadow-sm);
+        }
+        .search-bar:focus-within {
+            border-color: var(--madhwa-primary);
+            box-shadow: 0 0 0 3px rgba(230,126,34,0.08);
+        }
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 12px 10px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+        }
+        .search-bar .search-icon { font-size: 18px; color: var(--text-secondary); }
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .chip {
+            padding: 6px 18px;
+            border-radius: 40px;
+            background: white;
+            border: 1px solid var(--border-soft);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .chip:hover { background: #fff3e0; border-color: var(--madhwa-light); }
+        .chip.active { background: var(--madhwa-primary); color: white; border-color: var(--madhwa-primary); }
+        .purohit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .purohit-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-soft);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .purohit-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .purohit-card .purohit-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+        .purohit-card .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            flex-shrink: 0;
+        }
+        .purohit-card .purohit-info { flex: 1; }
+        .purohit-card .purohit-name { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+        .purohit-card .purohit-location { font-size: 13px; color: var(--text-secondary); }
+        .purohit-card .purohit-expertise {
+            font-size: 13px;
+            color: var(--madhwa-primary);
+            font-weight: 500;
+            margin: 4px 0;
+        }
+        .purohit-card .purohit-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 4px 0;
+        }
+        .purohit-card .purohit-meta span { display: flex; align-items: center; gap: 4px; }
+        .purohit-card .purohit-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 6px 0 10px;
+        }
+        .purohit-card .purohit-badges .badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 12px;
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+        .purohit-card .purohit-badges .badge.verified { background: #e8f5e9; color: #1b5e20; }
+        .purohit-card .purohit-badges .badge.available { background: #e3f2fd; color: #0d47a1; }
+        .purohit-card .purohit-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .purohit-card .purohit-actions button {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background: var(--madhwa-primary);
+            color: white;
+        }
+        .purohit-card .purohit-actions button:hover { transform: scale(1.02); }
+        .purohit-card .purohit-actions .btn-whatsapp { background: #25d366; color: white; }
+        .purohit-card .purohit-actions .btn-outline {
+            background: none;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-soft);
+        }
+        .purohit-card .purohit-actions .btn-outline:hover { background: #fff3e0; border-color: var(--madhwa-light); }
+
+        @media (max-width: 768px) {
+            .page-content { padding: 20px 16px 40px; }
+            .purohit-hero { padding: 24px 20px; }
+            .purohit-hero h1 { font-size: 26px; }
+            .purohit-grid { grid-template-columns: 1fr; gap: 16px; }
+            .search-section { flex-direction: column; }
+            .search-bar { width: 100%; }
+            .filter-chips { gap: 6px; }
+            .chip { font-size: 11px; padding: 4px 14px; }
+        }
+        @media (max-width: 480px) {
+            .purohit-card .purohit-header { flex-wrap: wrap; }
+            .purohit-card .avatar { width: 44px; height: 44px; font-size: 15px; }
+            .purohit-card .purohit-name { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="headerPlaceholder"></div>
+
+    <main class="page-content">
+
+        <div class="search-section">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search by name, location, or expertise..." oninput="filterPurohits()">
+            </div>
+        </div>
+
+        <div class="filter-chips">
+            <span class="chip active" data-filter="all" onclick="filterByChip('all', this)">✨ All</span>
+            <span class="chip" data-filter="satyanarayana" onclick="filterByChip('satyanarayana', this)">🪔 Satyanarayana</span>
+            <span class="chip" data-filter="vishnu" onclick="filterByChip('vishnu', this)">📿 Vishnu Sahasranama</span>
+            <span class="chip" data-filter="rudra" onclick="filterByChip('rudra', this)">🌿 Rudra Abhishekam</span>
+            <span class="chip" data-filter="ganesha" onclick="filterByChip('ganesha', this)">🐘 Ganesha Puja</span>
+            <span class="chip" data-filter="other" onclick="filterByChip('other', this)">🕉️ Other</span>
+        </div>
+
+        <div class="purohit-grid" id="purohitGrid"></div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-mantra">🙏 Hari Sarvottama, Vayu Jeevottama 🙏</div>
+        <div class="footer-copy">© 2026 Madhwa Samaj — Preserving the Dvaita Tradition</div>
+    </footer>
+
+    <div class="toast" id="toast">🙏 Purohit details loaded!</div>
+
+    <script>
+        const purohits = [
+            { id: 1, name: "Rama Krishna", location: "Udupi, Karnataka", expertise: "Satyanarayana Puja, Vishnu Sahasranama", languages: "Kannada, Hindi, English", experience: "10+ years", fee: "₹1,200", rating: "4.8", available: true, avatar: "RK", verified: true, category: "satyanarayana" },
+            { id: 2, name: "Krishna Bhatta", location: "Mysuru, Karnataka", expertise: "Rudra Abhishekam, Ganesha Puja", languages: "Kannada, Sanskrit", experience: "8 years", fee: "₹2,500", rating: "4.6", available: true, avatar: "KB", verified: true, category: "rudra" },
+            { id: 3, name: "Lakshmi Narayan", location: "Delhi", expertise: "Vishnu Sahasranama, Satyanarayana Puja", languages: "Hindi, English, Sanskrit", experience: "12 years", fee: "₹1,500", rating: "4.9", available: false, avatar: "LN", verified: true, category: "vishnu" },
+            { id: 4, name: "Madhava Sastry", location: "Mantralayam, Andhra Pradesh", expertise: "Rudra Abhishekam, Ganesha Puja", languages: "Telugu, Kannada, Sanskrit", experience: "15 years", fee: "₹2,800", rating: "4.7", available: true, avatar: "MS", verified: true, category: "rudra" },
+            { id: 5, name: "Surya Narayan", location: "Varanasi, Uttar Pradesh", expertise: "Ganga Aarti, Vishnu Sahasranama", languages: "Hindi, Sanskrit", experience: "20 years", fee: "₹1,800", rating: "4.9", available: true, avatar: "SN", verified: true, category: "vishnu" },
+            { id: 6, name: "Narayana Acharya", location: "Udupi, Karnataka", expertise: "Satyanarayana Puja, Rudra Abhishekam", languages: "Kannada, Tulu, Sanskrit", experience: "6 years", fee: "₹1,000", rating: "4.4", available: true, avatar: "NA", verified: false, category: "satyanarayana" },
+            { id: 7, name: "Gopal Shastri", location: "Mumbai, Maharashtra", expertise: "Ganesha Puja, Vishnu Sahasranama", languages: "Marathi, Hindi, Sanskrit", experience: "9 years", fee: "₹1,400", rating: "4.5", available: true, avatar: "GS", verified: true, category: "ganesha" },
+            { id: 8, name: "Venkatesh Rao", location: "Tirupati, Andhra Pradesh", expertise: "Satyanarayana Puja, Vishnu Sahasranama", languages: "Telugu, Kannada, Tamil", experience: "11 years", fee: "₹1,600", rating: "4.7", available: false, avatar: "VR", verified: true, category: "satyanarayana" }
+        ];
+
+        let activeFilter = 'all';
+        const colors = ['#e67e22', '#4285f4', '#34a853', '#ea4335', '#fbbc04', '#8e44ad', '#1abc9c', '#e67e22'];
+
+        function renderPurohits(list) {
+            const grid = document.getElementById('purohitGrid');
+            if (list.length === 0) {
+                grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--text-secondary); padding:60px 0;">No purohits found. Try a different search! 🔍</p>`;
+                return;
+            }
+            let html = '';
+            list.forEach((p, index) => {
+                const color = colors[index % colors.length];
+                html += `
+                    <div class="purohit-card">
+                        <div class="purohit-header">
+                            <div class="avatar" style="background:${color};">${p.avatar}</div>
+                            <div class="purohit-info">
+                                <div class="purohit-name">${p.name}</div>
+                                <div class="purohit-location">📍 ${p.location}</div>
+                            </div>
+                        </div>
+                        <div class="purohit-expertise">🪔 ${p.expertise}</div>
+                        <div class="purohit-meta">
+                            <span>🗣️ ${p.languages}</span>
+                            <span>📅 ${p.experience}</span>
+                            <span>💰 ${p.fee}</span>
+                            <span>⭐ ${p.rating}</span>
+                        </div>
+                        <div class="purohit-badges">
+                            ${p.verified ? '<span class="badge verified">✅ Verified</span>' : ''}
+                            ${p.available ? '<span class="badge available">🟢 Available</span>' : '<span class="badge" style="background:#ffebee;color:#c62828;">🔴 Unavailable</span>'}
+                        </div>
+                        <div class="purohit-actions">
+                            <button onclick="showToast('🙏 Booking request sent to ${p.name}!')">📅 Book Now</button>
+                            <button class="btn-whatsapp" onclick="showToast('📱 WhatsApp contact for ${p.name}')">📱 WhatsApp</button>
+                            <button class="btn-outline" onclick="showToast('👤 Profile of ${p.name}')">👤 View Profile</button>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterPurohits() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = purohits.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(search) || p.location.toLowerCase().includes(search) || p.expertise.toLowerCase().includes(search);
+                const matchFilter = activeFilter === 'all' || p.category === activeFilter;
+                return matchSearch && matchFilter;
+            });
+            renderPurohits(filtered);
+        }
+
+        function filterByChip(filter, el) {
+            activeFilter = filter;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            filterPurohits();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        fetch('components/header.html')
             .then(res => res.text())
             .then(data => {
                 document.getElementById('headerPlaceholder').innerHTML = data;
@@ -396,4 +796,5 @@
         }
     </style>
 </body>
+>>>>>>> 28d485dcd45a46610de46f3a1a6097188c233257
 </html>

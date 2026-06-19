@@ -585,6 +585,662 @@
         // =============================================
         // LOAD HEADER & INIT
         // =============================================
+            fetch('components/header.html')
+                .then(res => res.text())
+                .then(data => {
+                    document.getElementById('headerPlaceholder').innerHTML = data;
+                    // Re-run hamburger and highlight after header loads
+                    if (typeof window.initHamburger === 'function') {
+                        window.initHamburger();
+                    }
+                    if (typeof window.highlightCurrentPage === 'function') {
+                        window.highlightCurrentPage();
+                    }
+                })
+                .catch(err => console.error('Failed to load header:', err));
+
+        // Initial render
+        renderMathas(mathaData);
+    </script>
+
+    <style>
+        /* Toast styles */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c2418;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            bottom: 120px;
+        }
+
+        /* Footer styles */
+        .site-footer {
+            background: #2c2418;
+            color: #b8a994;
+            padding: 32px 24px 24px;
+            text-align: center;
+            font-size: 13px;
+            margin-top: auto;
+        }
+        .site-footer .footer-mantra {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: #e6d5c4;
+            margin-bottom: 8px;
+        }
+        .site-footer .footer-copy {
+            font-size: 12px;
+            color: #8a7a6a;
+        }
+        @media (max-width: 480px) {
+            .site-footer { padding: 24px 16px 20px; }
+            .site-footer .footer-mantra { font-size: 14px; }
+        }
+    </style>
+</body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Madhwa Samaj | Mathas Network</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --madhwa-primary: #e67e22;
+            --madhwa-light: #f39c12;
+            --madhwa-dark: #d35400;
+            --google-blue: #4285f4;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc04;
+            --google-green: #34a853;
+            --bg-warm: #fefaf5;
+            --surface-white: #ffffff;
+            --text-primary: #2c2418;
+            --text-secondary: #7a5a3a;
+            --border-soft: #f0e2d4;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 14px rgba(230,126,34,0.06);
+            --shadow-lg: 0 8px 28px rgba(0,0,0,0.08);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-warm);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content {
+            flex: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px 24px 48px;
+            width: 100%;
+        }
+
+        /* ===== HERO ===== */
+        .matha-hero {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #fff8e1 100%);
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            margin-bottom: 32px;
+            text-align: center;
+            border: 1px solid rgba(230,126,34,0.12);
+        }
+
+        .matha-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .matha-hero h1 span {
+            color: var(--madhwa-primary);
+        }
+
+        .matha-hero p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 8px auto 0;
+        }
+
+        /* ===== SEARCH & FILTERS ===== */
+        .search-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .search-bar {
+            flex: 2;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 40px;
+            padding: 0 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--madhwa-primary);
+            box-shadow: 0 0 0 3px rgba(230,126,34,0.08);
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 12px 10px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+        }
+
+        .search-bar .search-icon {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .chip {
+            padding: 6px 18px;
+            border-radius: 40px;
+            background: white;
+            border: 1px solid var(--border-soft);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .chip:hover {
+            background: #fff3e0;
+            border-color: var(--madhwa-light);
+        }
+
+        .chip.active {
+            background: var(--madhwa-primary);
+            color: white;
+            border-color: var(--madhwa-primary);
+        }
+
+        /* ===== MAP PLACEHOLDER ===== */
+        .map-placeholder {
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .map-placeholder .map-icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .map-placeholder .map-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== MATHA GRID ===== */
+        .matha-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .matha-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-soft);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .matha-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .matha-card .matha-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .matha-card .matha-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .matha-card .matha-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 20px;
+            background: #fff3e0;
+            color: var(--madhwa-primary);
+            white-space: nowrap;
+        }
+
+        .matha-card .matha-badge.ashta {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+
+        .matha-card .matha-badge.deshastha {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .matha-card .matha-location {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .matha-card .matha-deity {
+            font-size: 13px;
+            color: var(--madhwa-primary);
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .matha-card .matha-pontiff {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .matha-card .matha-branches {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-soft);
+        }
+
+        .matha-card .matha-branches .branch-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 8px;
+            margin-top: 4px;
+        }
+
+        .matha-card .matha-branches .branch-item {
+            font-size: 11px;
+            background: #f8f4ef;
+            padding: 2px 10px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+        }
+
+        .matha-card .matha-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .matha-card .matha-actions button {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background: var(--madhwa-primary);
+            color: white;
+        }
+
+        .matha-card .matha-actions button:hover {
+            transform: scale(1.02);
+        }
+
+        .matha-card .matha-actions .btn-outline {
+            background: none;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-soft);
+        }
+
+        .matha-card .matha-actions .btn-outline:hover {
+            background: #fff3e0;
+            border-color: var(--madhwa-light);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .page-content {
+                padding: 20px 16px 40px;
+            }
+            .matha-hero {
+                padding: 24px 20px;
+            }
+            .matha-hero h1 {
+                font-size: 26px;
+            }
+            .matha-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .search-section {
+                flex-direction: column;
+            }
+            .search-bar {
+                width: 100%;
+            }
+            .filter-chips {
+                gap: 6px;
+            }
+            .chip {
+                font-size: 11px;
+                padding: 4px 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .matha-card .matha-name {
+                font-size: 16px;
+            }
+            .matha-card .matha-badge {
+                font-size: 10px;
+                padding: 2px 10px;
+            }
+            .map-placeholder {
+                padding: 20px;
+            }
+            .matha-card .matha-actions {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="headerPlaceholder"></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+
+
+        <!-- Search -->
+        <div class="search-section">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search Matha by name, location, or deity..." oninput="filterMathas()">
+            </div>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="filter-chips">
+            <span class="chip active" data-filter="all" onclick="filterByChip('all', this)">✨ All</span>
+            <span class="chip" data-filter="ashta" onclick="filterByChip('ashta', this)">🛕 Ashta Mathas</span>
+            <span class="chip" data-filter="deshastha" onclick="filterByChip('deshastha', this)">🌍 Deshastha Mathas</span>
+            <span class="chip" data-filter="branches" onclick="filterByChip('branches', this)">📍 Branches</span>
+        </div>
+
+        <!-- Map Placeholder -->
+        <div class="map-placeholder">
+            <div class="map-icon">🗺️</div>
+            <div class="map-text">📍 Interactive map of Mathas across India — coming soon</div>
+        </div>
+
+        <!-- Matha Grid -->
+        <div class="matha-grid" id="mathaGrid">
+            <!-- Rendered by JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- ===== SHARED FOOTER ===== -->
+    <footer class="site-footer">
+        <div class="footer-mantra">🙏 Hari Sarvottama, Vayu Jeevottama 🙏</div>
+        <div class="footer-copy">© 2026 Madhwa Samaj — Preserving the Dvaita Tradition</div>
+    </footer>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast">📍 Matha details loaded!</div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // =============================================
+        // MATHA DATA (with branches)
+        // =============================================
+        const mathaData = [
+            {
+                id: 1,
+                name: "Palimaru Matha",
+                type: "ashta",
+                location: "Udupi, Karnataka",
+                deity: "Shri Rama",
+                currentPontiff: "Sri Vidyasagara Tirtha",
+                branches: ["Bengaluru", "Mysuru", "Mangaluru"]
+            },
+            {
+                id: 2,
+                name: "Adamaru Matha",
+                type: "ashta",
+                location: "Udupi, Karnataka",
+                deity: "Chaturbhuja Kaliyamardana Krishna",
+                currentPontiff: "Sri Vishwapriya Tirtha",
+                branches: ["Chennai", "Mumbai", "Hubballi"]
+            },
+            {
+                id: 3,
+                name: "Krishnapura Matha",
+                type: "ashta",
+                location: "Udupi, Karnataka",
+                deity: "Kaliyamardana Krishna",
+                currentPontiff: "Sri Vidyadheesha Tirtha",
+                branches: ["Bengaluru", "Pune"]
+            },
+            {
+                id: 4,
+                name: "Puttige Matha",
+                type: "ashta",
+                location: "Udupi, Karnataka",
+                deity: "Panduranga Vitthala",
+                currentPontiff: "Sri Sugunendra Tirtha",
+                branches: ["Mangaluru", "Mumbai"]
+            },
+            {
+                id: 5,
+                name: "Shiroor Matha",
+                type: "ashta",
+                location: "Udupi, Karnataka",
+                deity: "Vitthala",
+                currentPontiff: "Sri Lakshmivara Tirtha",
+                branches: ["Bengaluru", "Delhi"]
+            },
+            {
+                id: 6,
+                name: "Sodhe Matha",
+                type: "ashta",
+                location: "Sirsi, Karnataka",
+                deity: "Bhuvaraha",
+                currentPontiff: "Sri Vishwavallabha Tirtha",
+                branches: ["Hubballi", "Dharwad", "Mumbai"]
+            },
+            {
+                id: 7,
+                name: "Kaniyooru Matha",
+                type: "ashta",
+                location: "Udupi, Karnataka",
+                deity: "Narasimha",
+                currentPontiff: "Sri Vidyavallabha Tirtha",
+                branches: ["Bengaluru", "Chennai"]
+            },
+            {
+                id: 8,
+                name: "Pejavara Matha",
+                type: "ashta",
+                location: "Udupi, Karnataka",
+                deity: "Vitthala",
+                currentPontiff: "Sri Vishvesha Tirtha",
+                branches: ["Bengaluru", "Mysuru", "Mangaluru", "Mumbai"]
+            },
+            {
+                id: 9,
+                name: "Uttaradi Matha",
+                type: "deshastha",
+                location: "Bengaluru, Karnataka",
+                deity: "Shri Krishna",
+                currentPontiff: "Sri Satyatma Tirtha",
+                branches: ["Mumbai", "Pune", "Chennai", "Delhi", "Hyderabad", "Varanasi", "Ahmedabad", "Kolkata"]
+            },
+            {
+                id: 10,
+                name: "Vyasaraja Matha",
+                type: "deshastha",
+                location: "Sosale / Kundapura, Karnataka",
+                deity: "Shri Krishna",
+                currentPontiff: "Sri Vidyaprasanna Tirtha",
+                branches: ["Bengaluru", "Mysuru", "Tirupati", "Mumbai"]
+            },
+            {
+                id: 11,
+                name: "Raghavendra Matha",
+                type: "deshastha",
+                location: "Mantralayam, Andhra Pradesh",
+                deity: "Shri Rama",
+                currentPontiff: "Sri Subudhendra Tirtha",
+                branches: ["Bengaluru", "Mumbai", "Chennai", "Pune", "Hyderabad", "Delhi", "Tirupati", "Udupi", "Mysuru", "Vijayawada", "Nagpur", "Kolkata", "Ahmedabad", "Visakhapatnam", "Varanasi"]
+            },
+            {
+                id: 12,
+                name: "Sripadaraja Matha",
+                type: "deshastha",
+                location: "Mulabagilu, Karnataka",
+                deity: "Shri Krishna",
+                currentPontiff: "Sri Vibudendra Tirtha",
+                branches: ["Bengaluru", "Tirupati"]
+            }
+        ];
+
+        let activeFilter = 'all';
+
+        // =============================================
+        // RENDER MATHA CARDS
+        // =============================================
+        function renderMathas(mathas) {
+            const grid = document.getElementById('mathaGrid');
+            if (mathas.length === 0) {
+                grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--text-secondary); padding:60px 0;">No Mathas found. Try a different search! 🔍</p>`;
+                return;
+            }
+
+            let html = '';
+            mathas.forEach(m => {
+                const badgeClass = m.type === 'ashta' ? 'ashta' : 'deshastha';
+                const badgeLabel = m.type === 'ashta' ? '🏛️ Ashta Matha' : '🌍 Deshastha Matha';
+                const branchList = m.branches.map(b => `<span class="branch-item">📍 ${b}</span>`).join('');
+
+                html += `
+                    <div class="matha-card" data-name="${m.name.toLowerCase()}" data-location="${m.location.toLowerCase()}" data-deity="${m.deity.toLowerCase()}" data-type="${m.type}">
+                        <div class="matha-header">
+                            <div class="matha-name">${m.name}</div>
+                            <span class="matha-badge ${badgeClass}">${badgeLabel}</span>
+                        </div>
+                        <div class="matha-location">📍 ${m.location}</div>
+                        <div class="matha-deity">🛕 ${m.deity}</div>
+                        <div class="matha-pontiff">🙏 Current Pontiff: ${m.currentPontiff}</div>
+                        <div class="matha-branches">
+                            <strong>🏢 Branches (${m.branches.length})</strong>
+                            <div class="branch-list">${branchList}</div>
+                        </div>
+                        <div class="matha-actions">
+                            <button onclick="showToast('📍 ${m.name} details loaded!')">📖 View Details</button>
+                            <button class="btn-outline" onclick="showToast('📍 ${m.location}')">🗺️ Location</button>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        // =============================================
+        // FILTER FUNCTIONS
+        // =============================================
+        function filterMathas() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = mathaData.filter(m => {
+                const matchSearch = m.name.toLowerCase().includes(search) ||
+                                    m.location.toLowerCase().includes(search) ||
+                                    m.deity.toLowerCase().includes(search);
+                const matchFilter = activeFilter === 'all' || m.type === activeFilter;
+                return matchSearch && matchFilter;
+            });
+            renderMathas(filtered);
+        }
+
+        function filterByChip(filter, el) {
+            activeFilter = filter;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            filterMathas();
+        }
+
+        // =============================================
+        // TOAST
+        // =============================================
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // =============================================
+        // LOAD HEADER & INIT
+        // =============================================
         fetch('components/header.html')
             .then(res => res.text())
             .then(data => {
@@ -652,4 +1308,5 @@
         }
     </style>
 </body>
+>>>>>>> 28d485dcd45a46610de46f3a1a6097188c233257
 </html>
