@@ -140,6 +140,10 @@
 <body>
     <div id="headerPlaceholder"></div>
     <main class="page-content">
+        <div class="temple-hero">
+            <h1>🛕 <span>Sacred Temples</span> of the Madhwa Tradition</h1>
+            <p>Discover temples associated with Shri Madhwacharya, the Ashta Mathas, and the wider Madhwa community.</p>
+        </div>
         <div class="search-section">
             <div class="search-bar">
                 <span class="search-icon">🔍</span>
@@ -159,6 +163,55 @@
     </footer>
     <div class="toast" id="toast">🛕 Temple details loaded!</div>
     <script>
+        // =============================================
+        // HAMBURGER — DEFINED IN PAGE
+        // =============================================
+        function initHamburger() {
+            const hamburger = document.getElementById('hamburgerBtn');
+            const navLinks = document.getElementById('navLinks');
+            if (!hamburger || !navLinks) return;
+
+            const newHamburger = hamburger.cloneNode(true);
+            hamburger.parentNode.replaceChild(newHamburger, hamburger);
+            const newNavLinks = navLinks.cloneNode(true);
+            navLinks.parentNode.replaceChild(newNavLinks, navLinks);
+
+            const finalHamburger = document.getElementById('hamburgerBtn');
+            const finalNavLinks = document.getElementById('navLinks');
+
+            finalHamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                finalNavLinks.classList.toggle('active');
+            });
+
+            finalNavLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    finalNavLinks.classList.remove('active');
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!finalNavLinks.contains(e.target) && !finalHamburger.contains(e.target)) {
+                    finalNavLinks.classList.remove('active');
+                }
+            });
+        }
+
+        function highlightCurrentPage() {
+            const currentPage = window.location.pathname.split('/').pop() || 'ms-temples.html';
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        // =============================================
+        // TEMPLE DATA & LOGIC
+        // =============================================
         const templeData = [
             { id: 1, name: "Udupi Shri Krishna Temple", type: "ashta", location: "Udupi, Karnataka", deity: "Shri Krishna (Bala Krishna)", matha: "Palimaru Matha", timings: "5:00 AM - 9:00 PM" },
             { id: 2, name: "Shri Rama Temple, Palimaru", type: "ashta", location: "Palimaru, Udupi, Karnataka", deity: "Shri Rama", matha: "Palimaru Matha", timings: "6:00 AM - 8:00 PM" },
@@ -228,15 +281,19 @@
             clearTimeout(toast._timer);
             toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
         }
+
+        // =============================================
+        // LOAD HEADER
+        // =============================================
         fetch('components/header.html')
-    .then(res => res.text())
-    .then(data => {
-        document.getElementById('headerPlaceholder').innerHTML = data;
-        // CALL THESE AFTER HEADER LOADS
-        initHamburger();
-        highlightCurrentPage();
-    })
-    .catch(err => console.error('Failed to load header:', err));
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('headerPlaceholder').innerHTML = data;
+                initHamburger();
+                highlightCurrentPage();
+            })
+            .catch(err => console.error('Failed to load header:', err));
+
         renderTemples(templeData);
     </script>
     <style>

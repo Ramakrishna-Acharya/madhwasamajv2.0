@@ -146,6 +146,10 @@
 <body>
     <div id="headerPlaceholder"></div>
     <main class="page-content">
+        <div class="purohit-hero">
+            <h1>🙏 Find a <span>Purohit</span> for Your Sacred Ceremony</h1>
+            <p>Connect with experienced purohits across India for pujas, homams, and Vedic rituals.</p>
+        </div>
         <div class="search-section">
             <div class="search-bar">
                 <span class="search-icon">🔍</span>
@@ -168,6 +172,55 @@
     </footer>
     <div class="toast" id="toast">🙏 Purohit details loaded!</div>
     <script>
+        // =============================================
+        // HAMBURGER — DEFINED IN PAGE
+        // =============================================
+        function initHamburger() {
+            const hamburger = document.getElementById('hamburgerBtn');
+            const navLinks = document.getElementById('navLinks');
+            if (!hamburger || !navLinks) return;
+
+            const newHamburger = hamburger.cloneNode(true);
+            hamburger.parentNode.replaceChild(newHamburger, hamburger);
+            const newNavLinks = navLinks.cloneNode(true);
+            navLinks.parentNode.replaceChild(newNavLinks, navLinks);
+
+            const finalHamburger = document.getElementById('hamburgerBtn');
+            const finalNavLinks = document.getElementById('navLinks');
+
+            finalHamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                finalNavLinks.classList.toggle('active');
+            });
+
+            finalNavLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    finalNavLinks.classList.remove('active');
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!finalNavLinks.contains(e.target) && !finalHamburger.contains(e.target)) {
+                    finalNavLinks.classList.remove('active');
+                }
+            });
+        }
+
+        function highlightCurrentPage() {
+            const currentPage = window.location.pathname.split('/').pop() || 'ms-purohit.html';
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        // =============================================
+        // PUROHIT DATA & LOGIC
+        // =============================================
         const purohits = [
             { id: 1, name: "Rama Krishna", location: "Udupi, Karnataka", expertise: "Satyanarayana Puja, Vishnu Sahasranama", languages: "Kannada, Hindi, English", experience: "10+ years", fee: "₹1,200", rating: "4.8", available: true, avatar: "RK", verified: true, category: "satyanarayana" },
             { id: 2, name: "Krishna Bhatta", location: "Mysuru, Karnataka", expertise: "Rudra Abhishekam, Ganesha Puja", languages: "Kannada, Sanskrit", experience: "8 years", fee: "₹2,500", rating: "4.6", available: true, avatar: "KB", verified: true, category: "rudra" },
@@ -241,15 +294,19 @@
             clearTimeout(toast._timer);
             toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
         }
+
+        // =============================================
+        // LOAD HEADER
+        // =============================================
         fetch('components/header.html')
-    .then(res => res.text())
-    .then(data => {
-        document.getElementById('headerPlaceholder').innerHTML = data;
-        // CALL THESE AFTER HEADER LOADS
-        initHamburger();
-        highlightCurrentPage();
-    })
-    .catch(err => console.error('Failed to load header:', err));
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('headerPlaceholder').innerHTML = data;
+                initHamburger();
+                highlightCurrentPage();
+            })
+            .catch(err => console.error('Failed to load header:', err));
+
         renderPurohits(purohits);
     </script>
     <style>
